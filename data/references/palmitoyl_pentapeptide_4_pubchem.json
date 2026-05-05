@@ -1,0 +1,20 @@
+{
+  "name": "Palmitoyl pentapeptide-4",
+  "common_representation": "Pal-KTTKS",
+  "source": "PubChem CID 9897237",
+  "retrieved": "2026-05-05",
+  "properties": {
+    "molecular_formula": "C39H75N7O10",
+    "molecular_weight": 802.1,
+    "isomeric_smiles": "CCCCCCCCCCCCCCCC(=O)N[C@@H](CCCCN)C(=O)N[C@@H]([C@@H](C)O)C(=O)N[C@@H]([C@@H](C)O)C(=O)N[C@@H](CCCCN)C(=O)N[C@@H](CO)C(=O)O",
+    "xlogp": 0.8,
+    "tpsa": 296,
+    "h_bond_donor_count": 11,
+    "h_bond_acceptor_count": 12,
+    "rotatable_bond_count": 35
+  },
+  "notes": [
+    "PubChem XLogP and RDKit Crippen MolLogP use different algorithms.",
+    "Hydrogen-bond acceptor counts can differ across descriptor implementations."
+  ]
+}

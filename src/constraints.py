@@ -3,11 +3,38 @@ Physicochemical property calculators for peptide skin penetration.
 All properties normalized to [0, 1] for fitness functions.
 """
 
+from dataclasses import asdict, dataclass
+import logging
 import numpy as np
 from typing import Dict
-import logging
+
+from .chemistry import (
+    MolecularDescriptors,
+    descriptors_from_sequence,
+    descriptors_from_smiles,
+)
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class PenetrationScore:
+    """
+    Normalized permeability-oriented score with raw descriptor context.
+
+    The score is a design heuristic, not a measured permeability coefficient.
+    Higher is better, and penalties are normalized to [0, 1].
+    """
+
+    score: float
+    weighted_penalty: float
+    penalties: Dict[str, float]
+    descriptors: MolecularDescriptors
+
+    def to_dict(self) -> dict:
+        data = asdict(self)
+        data["descriptors"] = self.descriptors.to_dict()
+        return data
 
 
 class PhysicochemicalCalculator:
@@ -15,13 +42,35 @@ class PhysicochemicalCalculator:
     Compute peptide properties relevant to transdermal delivery.
     """
 
-    # Literature-derived optimal ranges
+    # Fast residue-table prefilter ranges. Final paper scoring should use
+    # EXACT_TARGETS through score_descriptors().
     TARGETS = {
-        'tpsa': (80, 140),          # Å²; optimal < 140
+        'tpsa': (80, 140),          # A^2; optimal < 140
         'mw': (200, 500),           # Da; optimal < 500
         'logp': (1.0, 3.0),         # optimal 1-3
         'hbd': (0, 5),              # H-bond donors; minimize
         'hba': (0, 10),             # H-bond acceptors; minimize
+    }
+
+    # RDKit descriptor targets used for publication-grade candidate scoring.
+    EXACT_TARGETS = {
+        'tpsa': (0, 140),            # A^2; lower is generally better for passive diffusion
+        'mw': (0, 500),              # Da
+        'logp': (1.0, 3.0),          # topical/transdermal balance window
+        'hbd': (0, 5),
+        'hba': (0, 10),
+        'rotatable_bonds': (0, 10),
+        'formal_charge': (-1, 1),
+    }
+
+    EXACT_WEIGHTS = {
+        'tpsa': 0.25,
+        'mw': 0.25,
+        'logp': 0.20,
+        'hbd': 0.10,
+        'hba': 0.10,
+        'rotatable_bonds': 0.05,
+        'formal_charge': 0.05,
     }
 
     @staticmethod
@@ -130,13 +179,16 @@ class PhysicochemicalCalculator:
 
         return min(penalty, 1.0)
 
-    def compute_penetration_score(self, sequence: str) -> float:
+    def compute_heuristic_penetration_score(self, sequence: str) -> float:
         """
-        Composite score for skin penetration potential.
+        Fast residue-table prefilter for skin penetration potential.
+
+        This is retained for rough exploration only. Use
+        score_sequence_exact() or score_smiles_exact() for reported results.
         Higher is better. Range [0, 1].
 
         Based on:
-        - TPSA < 140 Ų
+        - TPSA < 140 A^2
         - MW < 500 Da
         - LogP 1-3
         - Minimize H-bond donors/acceptors
@@ -169,25 +221,67 @@ class PhysicochemicalCalculator:
 
         return 1.0 - min(total_penalty, 1.0)
 
+    def score_descriptors(self, descriptors: MolecularDescriptors) -> PenetrationScore:
+        """
+        Score exact RDKit descriptors against topical-delivery design targets.
+
+        The output intentionally exposes every component penalty so candidates
+        can be audited instead of treated as black-box scalar scores.
+        """
+        raw_values = {
+            'tpsa': descriptors.tpsa,
+            'mw': descriptors.molecular_weight,
+            'logp': descriptors.logp,
+            'hbd': descriptors.hbd,
+            'hba': descriptors.hba,
+            'rotatable_bonds': descriptors.rotatable_bonds,
+            'formal_charge': descriptors.formal_charge,
+        }
+        penalties = {
+            key: self.penalty_score(value, self.EXACT_TARGETS[key])
+            for key, value in raw_values.items()
+        }
+        weighted_penalty = sum(
+            self.EXACT_WEIGHTS[key] * penalties[key]
+            for key in self.EXACT_WEIGHTS
+        )
+        bounded_penalty = min(max(weighted_penalty, 0.0), 1.0)
+        return PenetrationScore(
+            score=1.0 - bounded_penalty,
+            weighted_penalty=bounded_penalty,
+            penalties=penalties,
+            descriptors=descriptors,
+        )
+
+    def score_sequence_exact(self, sequence: str, name: str = None) -> PenetrationScore:
+        """Compute exact RDKit descriptors for a canonical peptide sequence and score them."""
+        return self.score_descriptors(descriptors_from_sequence(sequence, name=name))
+
+    def score_smiles_exact(self, smiles: str, name: str, source: str = "smiles") -> PenetrationScore:
+        """Compute exact RDKit descriptors for a molecule SMILES and score them."""
+        return self.score_descriptors(descriptors_from_smiles(smiles, name=name, source=source))
+
+    def compute_penetration_score(self, sequence: str) -> float:
+        """
+        Publication-grade penetration score for canonical peptide sequences.
+
+        This method now uses RDKit descriptors through score_sequence_exact().
+        Use compute_heuristic_penetration_score() for the legacy residue-table
+        approximation.
+        """
+        return self.score_sequence_exact(sequence).score
+
     def compute_tpsa(self, sequence: str) -> float:
-        """
-        Estimate TPSA from sequence composition.
-        TPSA ≈ 20 * (HBA + HBD)
-        """
-        props = self.compute_amino_acid_properties(sequence)
-        if props is None:
-            return 0.0
-        return props['hba'] * 20 + props['hbd'] * 10
+        """Return RDKit TPSA for an unmodified canonical peptide sequence."""
+        return self.score_sequence_exact(sequence).descriptors.tpsa
 
     def compute_molecular_weight(self, sequence: str) -> float:
-        """Return actual molecular weight."""
-        props = self.compute_amino_acid_properties(sequence)
-        return props['mw'] if props else 0.0
+        """Return RDKit molecular weight for an unmodified canonical peptide sequence."""
+        return self.score_sequence_exact(sequence).descriptors.molecular_weight
 
     def compute_logp(self, sequence: str) -> float:
-        """Return average lipophilicity."""
-        props = self.compute_amino_acid_properties(sequence)
-        return props['logp'] if props else 0.0
+        """Return RDKit Crippen MolLogP for an unmodified canonical peptide sequence."""
+        return self.score_sequence_exact(sequence).descriptors.logp
 
     def compute_gyration_radius(self, sequence: str) -> float:
         """

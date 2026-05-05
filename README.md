@@ -1,179 +1,260 @@
 # Computational Evolution of Collagen-Stimulating Peptides for Enhanced Epidermal Permeability
 
-## Overview
+This repository supports a computational bio-research paper on Matrixyl-family peptide optimization for topical delivery. The current implementation builds a reproducible pipeline from corrected baselines through RDKit descriptor scoring, evolutionary search, Pareto analysis, structural/conformer checks, experimental validation planning, and GPU-ready protein language model (PLM) preflight.
 
-This project applies evolutionary algorithms and protein language models to optimize cosmetic peptides for enhanced skin penetration while maintaining collagen-binding activity. We target the critical challenge in peptide therapeutics: crossing the stratum corneum barrier without losing functional structure.
+The actual GPU PLM scoring run has not been executed in this local environment because no CUDA device is available. The repository is prepared for that run.
 
-### The Problem
-Cosmetic peptides (e.g., Matrixyl/palmitoyl pentapeptide-4) work in vitro but struggle with in vivo skin penetration. The barrier properties that make skin protective also prevent functional molecules from entering. Current approaches rely on chemical permeation enhancers or delivery vehicles, which add cost and complexity.
+## Scientific Framing
 
-### The Solution
-**Computational peptide optimization** using:
-- Evolutionary algorithms (CMA-ES, NSGA-II multi-objective)
-- Protein language models as structural/functional oracles
-- Physicochemical constraints tied to transdermal delivery literature
-- Iterative refinement balancing penetration vs. collagen-binding function
+The primary baseline is the Matrixyl / palmitoyl pentapeptide-4 peptide core:
 
-## Target Peptide
+- Matrixyl core: `KTTKS`
+- Lipidated commercial comparator: `Pal-KTTKS`, represented by SMILES in `data/molecules/matrixyl_palmitoylated.smi`
+- Collagen-like control retained separately: `GPKGDPGA`
 
-**Starting sequence**: Palmitoyl pentapeptide-4 (Matrixyl)
-- Current MW: ~573 Da (slightly above ideal threshold)
-- Known collagen-binding motif: well-characterized in literature
-- Commercial baseline: ~10+ years in formulations, proven safe
+The project optimizes permeability-associated descriptors while preserving motif-level similarity to the Matrixyl core. The current functional score is a computational preservation proxy, not a direct collagen-stimulation assay.
 
-## Optimization Constraints
+## Current Status
 
-| Property | Target | Rationale |
-|---|---|---|
-| TPSA | < 140 Ų | Literature: threshold for skin permeability |
-| Molecular Weight | < 500 Da | Passive diffusion dominates; Matrixyl is 573 Da |
-| LogP | 1–3 | Balance: hydrophobic enough to cross membrane, hydrophilic enough to dissolve |
-| H-bond Donors/Acceptors | Minimize in core motif | Reduce interaction with stratum corneum polysaccharides |
-| Flexibility (Gyration Radius) | Minimize | Lower conformational entropy = easier penetration |
-| Collagen Binding | Preserve | Non-negotiable: functional constraint |
+Completed:
 
-## Proposed Improvements to Baseline Concept
+- Corrected baseline sequence data from the original collagen-like fragment to `KTTKS`.
+- Added RDKit-backed descriptor calculation for peptide FASTA and SMILES inputs.
+- Added exact penetration scoring using molecular weight, TPSA, LogP, hydrogen bonding, rotatable bonds, and formal charge.
+- Added fixed-length Matrixyl-family search-space validation with max edit distance 2.
+- Added transparent functional-preservation scoring using identity, edit distance, length consistency, and BLOSUM62-style substitution similarity.
+- Added deterministic tournament search and dependency-light Pareto optimization.
+- Added candidate analysis, mutation enrichment, baseline comparison, and figure generation.
+- Added RDKit conformer ensemble validation with radius-of-gyration compactness summaries.
+- Added experimental validation design artifacts for synthesis candidates, controls, Franz diffusion, fibroblast collagen/procollagen, cytotoxicity, and irritation assays.
+- Hardened the PLM oracle for a real GPU run with ESM-2 and ProtBERT, batching, model-aware input formatting, sequential model loading, special-token-safe pooling, and embedding caching.
+- Added 60 unit tests covering the implemented pipeline.
 
-### 1. **Multi-Objective Optimization (NSGA-II)**
-- Optimize Pareto frontier between penetration and binding, not single weighted sum
-- Avoid getting trapped in local optima that sacrifice binding for penetration
-- Enables trade-off analysis: "which solutions maintain 80% binding while gaining 50% penetration?"
+Pending:
 
-### 2. **Ensemble Protein Language Models + Uncertainty**
-- Use ESM-2, ProtBERT, and OmegaFold in weighted ensemble
-- Quantify prediction uncertainty; prioritize high-confidence candidates
-- Reduces bias from single model training data
+- Run the real GPU-backed PLM scoring job.
+- Join PLM scores back into the candidate tables and re-rank the Pareto frontier.
+- Decide whether the synthesis panel changes after PLM evidence.
+- Execute wet-lab validation if moving beyond a computational manuscript.
 
-### 3. **Specialized Skin Permeability Models**
-- Integrate data-driven models predicting transdermal flux from TPSA + MW + LogP
-- Layer on top of PLM predictions for double-validation
-- Consider human skin vs. rat skin extrapolation factors
+## Optimization Targets
 
-### 4. **Active Learning Loop**
-- Don't optimize blindly; identify most informative sequences
-- Allocate computational budget to high-uncertainty, high-impact designs
-- Reduces total number of evaluations needed
+The descriptor score treats these as design pressures rather than absolute biological laws:
 
-### 5. **Hierarchical Evolutionary Strategy**
-- Phase 1: Evolve for penetration properties (unconstrained)
-- Phase 2: Constrain best penetrators, refine binding affinity
-- Prevents premature convergence to locally optimal solutions
+- TPSA: target below 140 A^2.
+- Molecular weight: target below 500 Da for passive diffusion, with separate interpretation for lipidated `Pal-KTTKS`.
+- LogP: target 1 to 3 for topical/transdermal balance.
+- Hydrogen-bond donors and acceptors: minimized while preserving peptide function.
+- Formal charge: near neutral preferred.
+- Rotatable bonds and radius of gyration: lower values preferred as compactness/flexibility proxies.
+- Functional preservation: motif similarity to `KTTKS`, plus later PLM similarity once GPU scoring is run.
 
-### 6. **Structure-Activity Relationship (SAR) Analysis**
-- Evolutionary footprinting: which positions/mutations drive improvements?
-- Alanine scanning on top candidates
-- Guide interpretability for medicinal chemistry
+## Repository Layout
 
-### 7. **Molecular Dynamics Validation**
-- Run 100+ ns MD simulations on top 5 candidates
-- Measure RMSD stability, radius of gyration, H-bond networks
-- Validate computational predictions before experimental testing
-
-### 8. **Experimental Validation Pipeline**
-- **In vitro**: Franz cell diffusion assays on human skin
-- **Positive controls**: known skin-penetrating peptides
-- **Negative controls**: original Matrixyl
-- **Metrics**: cumulative penetration, lag time, flux rate
-
-## Project Structure
-
-```
+```text
 Bio-paper/
-├── README.md                          # This file
-├── CLAUDE.md                          # Technical documentation
+├── PLAN.md
+├── README.md
 ├── data/
-│   ├── sequences/
-│   │   ├── baseline_matrixyl.fasta   # Original sequence
-│   │   └── optimized_candidates.csv  # Top evolved sequences
-│   └── physicochemical/
-│       └── training_data.csv          # TPSA/MW/LogP/permeability
-├── src/
-│   ├── oracle.py                      # Protein language model wrapper
-│   ├── evolutionary_algorithm.py      # NSGA-II / CMA-ES implementation
-│   ├── constraints.py                 # Physicochemical property calculators
-│   ├── active_learning.py             # Uncertainty-driven selection
-│   └── validation.py                  # MD simulations, metrics
+│   ├── molecules/
+│   │   └── matrixyl_palmitoylated.smi
+│   ├── references/
+│   │   └── palmitoyl_pentapeptide_4_pubchem.json
+│   └── sequences/
+│       ├── baseline_matrixyl.fasta
+│       ├── collagen_like_control.fasta
+│       ├── matrixyl_core.fasta
+│       └── README.md
 ├── experiments/
-│   ├── 01_baseline_optimization.py    # Initial CMA-ES run
-│   ├── 02_pareto_evolution.py         # NSGA-II multi-objective
-│   ├── 03_uncertainty_sampling.py     # Active learning
-│   └── 04_validation.py               # MD + metrics
-├── results/
-│   └── (output logs, candidate sequences, metrics)
-└── scripts/
-    ├── download_plm_weights.py        # Setup ESM-2, ProtBERT
-    └── generate_hpc_job.py            # Cluster submission templates
+│   ├── 01_tournament_search.py
+│   ├── 02_nsga2_pareto.py
+│   ├── 03_candidate_analysis.py
+│   ├── 04_structural_validation.py
+│   ├── 05_experimental_design.py
+│   ├── 06_plm_gpu_preflight.py
+│   └── 07_score_plm_oracle.py
+├── src/
+│   ├── analysis.py
+│   ├── candidates.py
+│   ├── chemistry.py
+│   ├── constraints.py
+│   ├── experimental_design.py
+│   ├── function_scores.py
+│   ├── oracle.py
+│   ├── pareto_search.py
+│   ├── plm_pipeline.py
+│   ├── search_space.py
+│   ├── structure.py
+│   └── tournament_search.py
+└── tests/
 ```
 
-## Experiment Plan
+`results/` is generated output and is not part of the source tree.
 
-### Phase 1: Baseline Single-Objective Optimization (Week 1–2)
-- CMA-ES on penetration score (TPSA + MW + LogP + gyration)
-- Constraint: must maintain ≥80% collagen binding (via PLM)
-- Population size: 50, generations: 200
-- **Deliverable**: top 20 candidates, penetration vs. binding scatter plot
+## Setup
 
-### Phase 2: Multi-Objective Pareto Optimization (Week 3–4)
-- NSGA-II optimizing (penetration, binding, synthesis feasibility)
-- 3-objective optimization
-- **Deliverable**: Pareto frontier visualization, trade-off analysis
+Install dependencies:
 
-### Phase 3: Active Learning & Refinement (Week 5–6)
-- Sample candidates from Pareto frontier using uncertainty
-- Ensemble predictions vs. individual model
-- Iterative refinement
-- **Deliverable**: uncertainty-weighted candidate list
+```bash
+python -m pip install -r requirements.txt
+```
 
-### Phase 4: Validation (Week 7–8)
-- Top 5 candidates: MD simulations (100+ ns each)
-- SAR analysis: alanine scanning, position importance
-- Comparison with Matrixyl baseline
-- **Deliverable**: validation report, figures for paper
+For the GPU PLM run, install a CUDA-compatible PyTorch build for the target machine. First-time Hugging Face model downloads require network access unless model snapshots are already cached and `--local-files-only` is used.
 
-### Phase 5: Experimental Design (Week 9–10)
-- Design in vitro Franz cell assay protocol
-- Select 2–3 top candidates for synthesis
-- **Deliverable**: experimental methods, candidate justification
+## Verification
 
-## Success Metrics
+Run the full unit suite:
 
-1. **Computational**:
-   - Achieve ≥2–3× improvement in skin penetration score vs. Matrixyl
-   - Maintain ≥85% collagen binding activity
-   - All candidates pass MD stability checks
+```bash
+PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests
+```
 
-2. **Publication**:
-   - Novel optimization framework (ensemble + multi-objective + active learning)
-   - Clear SAR interpretation
-   - Reproducible pipeline (open-source code)
+Current local audit status:
 
-3. **Commercial**:
-   - Identified candidates feasible to synthesize
-   - Patent landscape analysis (no conflicts)
-   - Cost-benefit vs. formulation complexity
+- 60 tests passing.
+- CPU-safe PLM preflight passes.
+- Local machine has `torch` installed but no CUDA device.
 
-## Dependencies
+## Pipeline Commands
 
-- **Structural Biology**: BioPython, py3Dmol, ProDy
-- **ML/Optimization**: ESM-2, scikit-optimize, DEAP (evolutionary algorithms), pymoo (NSGA-II)
-- **Chemistry**: RDKit (TPSA, LogP, MW), ProLIF (binding predictions)
-- **MD Simulations**: GROMACS or OpenMM + MDTraj
-- **Data**: UniProt, PubChem, literature datasets on skin permeability
+### Phase 3: Tournament Search
 
-## References
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/01_tournament_search.py \
+  --sequence data/sequences/matrixyl_core.fasta \
+  --population 100 \
+  --generations 100 \
+  --tournament-size 3 \
+  --mutation-rate 0.2 \
+  --elite-count 2 \
+  --seed 42 \
+  --max-edit-distance 2 \
+  --top-k 25 \
+  --output results/phase3_tournament_extensive
+```
 
-### Key Literature
-1. Matrixyl mechanism: Blanes-Mira et al., *Peptides* (2002)
-2. Skin permeability: Potts & Guy, *Pharm. Res.* (1992); TPSA threshold
-3. Peptide optimization: Leman et al., *Chem. Rev.* (2023) on protein design
-4. Active learning: Osuna et al., *ML for Drug Discovery* (2024)
-5. Multi-objective optimization: Deb et al., NSGA-II paper (2002)
+### Phase 4: Pareto Search
 
-## Authors & Contact
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/02_nsga2_pareto.py \
+  --output results/phase4_pareto_full
+```
 
-This project is designed for publication in *Nature Computational Science* or *ACS Synthetic Biology* (target audience: computational biologists + cosmetic chemists).
+### Phase 5: Candidate Analysis
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/03_candidate_analysis.py \
+  --frontier results/phase4_pareto_full/pareto_frontier.csv \
+  --output results/phase5_candidate_analysis \
+  --palmitoylated-smiles data/molecules/matrixyl_palmitoylated.smi
+```
+
+### Phase 6: Structural Validation
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/04_structural_validation.py \
+  --candidates results/phase5_candidate_analysis/candidate_summary.csv \
+  --output results/phase6_structural_validation \
+  --top-k 5 \
+  --num-conformers 8 \
+  --palmitoylated-conformers 3 \
+  --seed 42
+```
+
+### Phase 7: Experimental Design
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/05_experimental_design.py \
+  --candidates results/phase5_candidate_analysis/candidate_summary.csv \
+  --compactness results/phase6_structural_validation/conformer_summary.csv \
+  --output results/phase7_experimental_design \
+  --max-candidates 3
+```
+
+### Phase 8: GPU Preflight
+
+This prepares the full fixed-length, max-edit-2 Matrixyl candidate manifest without loading model weights:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/06_plm_gpu_preflight.py \
+  --enumerate-search-space \
+  --output results/phase8_plm_preflight \
+  --cache-dir results/phase8_plm_cache \
+  --batch-size 16 \
+  --reference-sequence KTTKS
+```
+
+Expected generated files:
+
+- `results/phase8_plm_preflight/candidate_manifest.csv`
+- `results/phase8_plm_preflight/preflight_report.json`
+
+The manifest should contain 3,706 unique candidate sequences.
+
+### Phase 8: Real GPU PLM Scoring
+
+Run this on a CUDA host:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python experiments/07_score_plm_oracle.py \
+  --candidates results/phase8_plm_preflight/candidate_manifest.csv \
+  --output results/phase8_plm_preflight/gpu_scores \
+  --cache-dir results/phase8_plm_cache \
+  --batch-size 16 \
+  --reference-sequence KTTKS \
+  --require-cuda \
+  --models facebook/esm2_t33_650M_UR50D \
+  --models rostlab/prot_bert
+```
+
+Expected generated files:
+
+- `results/phase8_plm_preflight/gpu_scores/plm_scores.csv`
+- `results/phase8_plm_preflight/gpu_scores/run_metadata.json`
+- Per-model embedding cache files in `results/phase8_plm_cache`
+
+By default, the GPU scorer loads models sequentially to reduce VRAM pressure. Use `--load-models-together` only on a host with enough GPU memory.
+
+## Current Candidate Shortlist
+
+The deterministic pipeline currently nominates:
+
+- `PTTPS`: high-penetration trade-off.
+- `KTTPS`: balanced conservative one-mutation analog.
+- `KTTPP`: backup high-penetration analog.
+
+This shortlist should be revisited after PLM scoring is joined back into the Phase 4/5 candidate tables.
+
+## Experimental Validation Plan
+
+The generated wet-lab planning artifacts include:
+
+- Synthesis candidates and controls.
+- Franz diffusion permeation design.
+- Vehicle and receptor compatibility checks.
+- Human dermal fibroblast collagen/procollagen assay.
+- Fibroblast and keratinocyte cytotoxicity.
+- Reconstructed human epidermis irritation testing.
+
+These are proposed validation designs, not experimental results.
+
+## Important Limitations
+
+- Descriptor thresholds come from small-molecule and transdermal literature and may not fully transfer to short peptides.
+- PLM embedding similarity is a proxy for sequence-level preservation, not direct collagen stimulation.
+- Palmitoylation changes partitioning, formulation behavior, and 3D extent; it cannot be represented by sequence alone.
+- RDKit conformer ensembles are exploratory and should not be framed as MD-level stability evidence.
+- Experimental permeability and fibroblast-response assays are required before biological or commercial claims.
+
+## References to Cite
+
+- Deb et al., NSGA-II: A fast and elitist multiobjective genetic algorithm (2002).
+- Lin et al., ESM-2 language models of protein sequences at evolutionary scale (2023).
+- Potts and Guy, Predicting skin permeability (1992).
+- Mitragotri et al., Transdermal drug delivery (2004).
+- Blanes-Mira et al., Matrixyl / palmitoyl pentapeptide activity literature (2002).
 
 ---
 
-**Status**: Planning phase  
-**Last Updated**: 2026-05-05
+Status: GPU-ready computational pipeline; real PLM scoring pending on CUDA hardware.  
+Last updated: 2026-05-05

@@ -1,0 +1,14 @@
+{
+  "candidates": "results/phase3_analysis/candidate_summary.csv",
+  "palmitoylated_smiles": "data/molecules/matrixyl_palmitoylated.smi",
+  "top_k": 5,
+  "num_conformers": 8,
+  "palmitoylated_conformers": 3,
+  "seed": 42,
+  "summary_count": 7,
+  "conformer_metric_count": 40,
+  "figure_written": false,
+  "git_commit": "unknown",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1046-nvidia-x86_64-with-glibc2.35"
+}

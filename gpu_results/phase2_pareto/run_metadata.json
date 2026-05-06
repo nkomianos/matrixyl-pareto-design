@@ -1,0 +1,24 @@
+{
+  "reference_sequence": "KTTKS",
+  "config": {
+    "population_size": 100,
+    "generations": 100,
+    "tournament_size": 2,
+    "mutation_rate": 0.2,
+    "seed": 42,
+    "max_initialization_attempts": 5000,
+    "max_mutation_attempts": 200
+  },
+  "search_space": {
+    "reference_sequence": "KTTKS",
+    "min_length": 5,
+    "max_length": 5,
+    "max_edit_distance": 2,
+    "locked_positions": []
+  },
+  "git_commit": "unknown",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1046-nvidia-x86_64-with-glibc2.35",
+  "figure_written": false,
+  "frontier_size": 9
+}

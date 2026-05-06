@@ -1,0 +1,9 @@
+{
+  "population_size": 100,
+  "generations": 100,
+  "tournament_size": 2,
+  "mutation_rate": 0.2,
+  "seed": 42,
+  "max_initialization_attempts": 5000,
+  "max_mutation_attempts": 200
+}

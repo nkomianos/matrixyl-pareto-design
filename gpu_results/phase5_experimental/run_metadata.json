@@ -1,0 +1,15 @@
+{
+  "candidate_source": "results/phase3_analysis/candidate_summary.csv",
+  "compactness_source": "results/phase4_structure/conformer_summary.csv",
+  "max_candidates": 3,
+  "selected_sequences": [
+    "PTTPS",
+    "KTTPS",
+    "KTTPP"
+  ],
+  "control_count": 6,
+  "assay_count": 5,
+  "git_commit": "unknown",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1046-nvidia-x86_64-with-glibc2.35"
+}

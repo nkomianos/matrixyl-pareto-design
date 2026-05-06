@@ -1,0 +1,79 @@
+{
+  "reference_sequence": "KTTKS",
+  "config": {
+    "population_size": 100,
+    "generations": 100,
+    "tournament_size": 3,
+    "mutation_rate": 0.2,
+    "elite_count": 2,
+    "seed": 42,
+    "max_initialization_attempts": 5000,
+    "max_mutation_attempts": 200
+  },
+  "search_space": {
+    "reference_sequence": "KTTKS",
+    "min_length": 5,
+    "max_length": 5,
+    "max_edit_distance": 2,
+    "locked_positions": []
+  },
+  "git_commit": "unknown",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1046-nvidia-x86_64-with-glibc2.35",
+  "figure_written": false,
+  "best": {
+    "sequence": "PTTPS",
+    "modification": "unmodified",
+    "search_validation": {
+      "sequence": "PTTPS",
+      "is_valid": true,
+      "failures": [],
+      "edit_distance": 2,
+      "length": 5
+    },
+    "functional_preservation": {
+      "sequence": "PTTPS",
+      "reference_sequence": "KTTKS",
+      "score": 0.6666666666666666,
+      "components": {
+        "identity": 0.6,
+        "substitution": 0.7333333333333333,
+        "edit": 0.6,
+        "length": 1.0
+      },
+      "edit_distance": 2
+    },
+    "penetration": {
+      "score": 0.686630075131,
+      "weighted_penalty": 0.31336992486899995,
+      "penalties": {
+        "tpsa": 0.3074702499999997,
+        "mw": 9.44947600000392e-06,
+        "logp": 1.0,
+        "hbd": 0.36,
+        "hba": 0.0,
+        "rotatable_bonds": 0.010000000000000002,
+        "formal_charge": 0.0
+      },
+      "descriptors": {
+        "name": "PTTPS",
+        "source": "rdkit_fasta",
+        "formula": "C21H35N5O9",
+        "molecular_weight": 501.5370000000003,
+        "exact_molecular_weight": 501.24347769999997,
+        "tpsa": 217.62999999999997,
+        "logp": -3.9776999999999907,
+        "hbd": 8,
+        "hba": 9,
+        "rotatable_bonds": 11,
+        "formal_charge": 0,
+        "heavy_atom_count": 35,
+        "sequence": "PTTPS",
+        "smiles": null
+      }
+    },
+    "is_valid": true,
+    "failed_filters": [],
+    "optimization_score": 0.4577533834206667
+  }
+}

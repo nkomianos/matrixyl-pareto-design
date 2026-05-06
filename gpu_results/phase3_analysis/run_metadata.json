@@ -1,0 +1,12 @@
+{
+  "frontier": "results/phase2_pareto/pareto_frontier.csv",
+  "palmitoylated_smiles": "data/molecules/matrixyl_palmitoylated.smi",
+  "candidate_count": 9,
+  "mutation_count": 5,
+  "baseline_count": 2,
+  "heatmap_written": false,
+  "tradeoff_written": false,
+  "git_commit": "unknown",
+  "python": "3.10.12 (main, Jan 26 2026, 14:55:28) [GCC 11.4.0]",
+  "platform": "Linux-6.8.0-1046-nvidia-x86_64-with-glibc2.35"
+}

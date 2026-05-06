@@ -1,0 +1,6 @@
+position,reference_residue,mutant_residue,mutation,count,frequency_among_candidates
+4,K,P,K4P,5,0.5555555555555556
+5,S,A,S5A,2,0.2222222222222222
+5,S,G,S5G,2,0.2222222222222222
+5,S,P,S5P,2,0.2222222222222222
+1,K,P,K1P,1,0.1111111111111111

@@ -1,0 +1,7 @@
+control,sample,purpose
+vehicle_blank,Formulation vehicle without peptide,"Baseline permeation, cytotoxicity, and collagen assay background."
+matrixyl_core,KTTKS,Unmodified peptide-core comparator for sequence-level claims.
+pal_kttks,Pal-KTTKS,Commercially recognizable lipidated Matrixyl comparator.
+collagen_like_sequence,GPKGDPGA,Non-Matrixyl collagen-like sequence control from the original repository baseline.
+positive_collagen_control,"Ascorbic acid or TGF-beta, assay-dependent",Confirms fibroblast collagen/procollagen assay responsiveness.
+cytotoxicity_control,Lab-standard membrane-disruptive positive control,Confirms viability and LDH assays detect cell damage.

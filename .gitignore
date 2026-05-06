@@ -53,8 +53,12 @@ venv.bak/
 .python-version
 
 # Results and data
-results/
-*.csv
+# Note: results/figures/ and gpu_results/ ARE tracked for reproducibility
+# Only ignore temporary result directories
+results/temp/
+results/debug/
+# Don't ignore CSV, allow figures and key results to be committed
+# *.csv  # Removed to track key results
 *.xlsx
 *.xls
 

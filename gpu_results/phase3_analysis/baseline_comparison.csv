@@ -1,0 +1,3 @@
+name,sequence,formula,molecular_weight,tpsa,logp,hbd,hba,rotatable_bonds,formal_charge,penetration_score,functional_score
+Matrixyl core,KTTKS,C23H45N7O9,563.6530000000005,292.45,-4.650599999999999,11,11,20,0,0.39494829559099986,1.0
+Pal-KTTKS,KTTKS,C39H75N7O10,802.068,295.53000000000003,0.9882000000000095,11,11,35,0,0.5077270753760001,1.0

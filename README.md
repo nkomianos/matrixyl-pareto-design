@@ -106,7 +106,7 @@ For the GPU PLM run, install a CUDA-compatible PyTorch build for the target mach
 Run the full unit suite:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests
+python -m pytest tests/ -v
 ```
 
 Current local audit status:
@@ -120,7 +120,7 @@ Current local audit status:
 ### Phase 3: Tournament Search
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/01_tournament_search.py \
+python experiments/01_tournament_search.py \
   --sequence data/sequences/matrixyl_core.fasta \
   --population 100 \
   --generations 100 \
@@ -136,14 +136,14 @@ PYTHONDONTWRITEBYTECODE=1 python experiments/01_tournament_search.py \
 ### Phase 4: Pareto Search
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/02_nsga2_pareto.py \
+python experiments/02_nsga2_pareto.py \
   --output results/phase4_pareto_full
 ```
 
 ### Phase 5: Candidate Analysis
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/03_candidate_analysis.py \
+python experiments/03_candidate_analysis.py \
   --frontier results/phase4_pareto_full/pareto_frontier.csv \
   --output results/phase5_candidate_analysis \
   --palmitoylated-smiles data/molecules/matrixyl_palmitoylated.smi
@@ -152,7 +152,7 @@ PYTHONDONTWRITEBYTECODE=1 python experiments/03_candidate_analysis.py \
 ### Phase 6: Structural Validation
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/04_structural_validation.py \
+python experiments/04_structural_validation.py \
   --candidates results/phase5_candidate_analysis/candidate_summary.csv \
   --output results/phase6_structural_validation \
   --top-k 5 \
@@ -164,7 +164,7 @@ PYTHONDONTWRITEBYTECODE=1 python experiments/04_structural_validation.py \
 ### Phase 7: Experimental Design
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/05_experimental_design.py \
+python experiments/05_experimental_design.py \
   --candidates results/phase5_candidate_analysis/candidate_summary.csv \
   --compactness results/phase6_structural_validation/conformer_summary.csv \
   --output results/phase7_experimental_design \
@@ -176,7 +176,7 @@ PYTHONDONTWRITEBYTECODE=1 python experiments/05_experimental_design.py \
 This prepares the full fixed-length, max-edit-2 Matrixyl candidate manifest without loading model weights:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/06_plm_gpu_preflight.py \
+python experiments/06_plm_gpu_preflight.py \
   --enumerate-search-space \
   --output results/phase8_plm_preflight \
   --cache-dir results/phase8_plm_cache \
@@ -196,7 +196,7 @@ The manifest should contain 3,706 unique candidate sequences.
 Run this on a CUDA host:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python experiments/07_score_plm_oracle.py \
+python experiments/07_score_plm_oracle.py \
   --candidates results/phase8_plm_preflight/candidate_manifest.csv \
   --output results/phase8_plm_preflight/gpu_scores \
   --cache-dir results/phase8_plm_cache \

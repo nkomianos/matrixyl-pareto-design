@@ -1,4 +1,0 @@
-sequence,role,rationale,penetration_score,functional_score,scalar_score,edit_distance,molecular_weight,tpsa,logp,mean_radius_of_gyration
-PTTPS,high_penetration_tradeoff,Highest predicted permeability score; tests whether aggressive motif editing translates to better delivery.,0.686630075131,0.6666666666666666,0.4577533834206667,2,501.5370000000003,217.62999999999997,-3.9776999999999907,5.049407075143211
-KTTPS,balanced_conservative,One-mutation candidate with stronger motif preservation and improved compactness relative to KTTKS.,0.5459175455668367,0.8333333333333334,0.45493128797236393,1,532.5950000000005,257.64,-4.273399999999995,5.083653446336518
-KTTPP,backup_high_penetration,"Backup analog with strong computed trade-off value if synthesis, solubility, or assay behavior limits the primary candidates.",0.677510092044,0.6695833333333333,0.453649465797795,2,542.6340000000005,228.61999999999998,-2.7594999999999894,5.24643711935574

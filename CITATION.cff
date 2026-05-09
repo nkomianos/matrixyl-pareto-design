@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite the manuscript and this repository."
+title: "Bio-paper: Constrained Evolutionary Design of Matrixyl Analogs"
+abstract: >-
+  A reproducible computational framework that combines exact RDKit molecular
+  descriptors, a tournament genetic algorithm, NSGA-II multi-objective
+  optimization, conformer-ensemble structural validation, and a sensitivity
+  analysis on penalty weights to redesign the Matrixyl (KTTKS) peptide for
+  improved topical delivery while preserving its functional motif.
+type: software
+authors:
+  - family-names: Komianos
+    given-names: Nikolaos
+  - family-names: Prakash
+    given-names: Pranadarth
+    email: pranup48@gmail.com
+repository-code: "https://github.com/nkomianos/Bio-paper"
+license: MIT
+keywords:
+  - peptide design
+  - evolutionary algorithms
+  - NSGA-II
+  - topical delivery
+  - constrained optimization
+  - Pareto frontier
+  - Matrixyl
+  - RDKit
+preferred-citation:
+  type: article
+  title: "Constrained Evolutionary Design of Matrixyl Analogs: Balancing Permeability and Functional Preservation Through Computational Optimization"
+  authors:
+    - family-names: Komianos
+      given-names: Nikolaos
+    - family-names: Prakash
+      given-names: Pranadarth
+      email: pranup48@gmail.com
+  year: 2026
+  notes: "Preprint forthcoming on bioRxiv."

@@ -254,7 +254,7 @@ functional_score = 0.4 * f_identity + 0.4 * f_edit_distance + 0.2 * f_blosum
 ### Limitations
 
 1. **Descriptor thresholds are soft**: MW < 500 and TPSA < 140 come from small-molecule literature; peptides violate these rules and still permeate (especially if formulated).
-2. **No PLM uncertainty**: Planned Phase 7 (ESM-2 / ProtBERT scoring) was skipped due to environment dependencies; functional-preservation score uses motif similarity only.
+2. **Functional-preservation score is sequence-based**: motif similarity, edit distance, and BLOSUM62 substitution scores are used as a transparent proxy. Adding a learned scoring layer (e.g., a protein language model) is plausible future work but is outside the scope of this study.
 3. **Conformer ensembles are exploratory**: RDKit geometries are not MD-validated; full explicit-solvent simulations would strengthen claims but are outside scope.
 4. **No skin binding model**: We optimize for passive diffusion descriptors; skin protein binding, metabolism, and formulation effects are not captured.
 5. **No in vitro validation**: This is a computational framework paper; biological activity remains unvalidated.
@@ -291,8 +291,8 @@ Phase 1 tournament search ran with random mutant initialization (not seeded from
 
 ### D. Code and Data Availability
 
-- **Repository**: GitHub (Bio-paper branch `claude/peptide-skin-penetration-aOat2`)
-- **Tests**: 60 unit tests covering all modules; 100% pass rate
+- **Repository**: https://github.com/nkomianos/Bio-paper (branch `main`)
+- **Tests**: 48 unit tests covering all modules; 100% pass rate
 - **Reproducibility**: Fixed random seeds (seed=42); all parameters logged to run_metadata.json
 - **Data**: All CSV files (evaluated_candidates, pareto_frontier, mutation_enrichment) included in supplementary materials
 

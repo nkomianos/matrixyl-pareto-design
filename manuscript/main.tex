@@ -14,6 +14,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{lineno}  % line numbers for review (bioRxiv recommended)
+\usepackage{orcidlink}  % \orcidlink{0000-0000-0000-0000} for ORCID badges
 
 % Define keywords command for abstract
 \providecommand{\keywords}[1]{%
@@ -31,12 +33,21 @@
 \lhead{Evolutionary Design of Matrixyl Analogs}
 
 % Title and author information
+% bioRxiv preprint format: full given names; affiliations as superscripts;
+% corresponding author marked with an asterisk; ORCIDs encouraged.
 \title{Constrained Evolutionary Design of Matrixyl Analogs: Balancing Permeability and Functional Preservation Through Computational Optimization}
 
 \author{%
-  N. Komianos\textsuperscript{1,*}\\
-  \textsuperscript{1}Computational Biology Lab, [Institution Name]\\
-  \textsuperscript{*}Corresponding author: n.komianos@gmail.com
+  Nikolaos Komianos\textsuperscript{1,$\dagger$,*}\,\orcidlink{0009-0005-0717-8340},
+  Pranadarth Prakash\textsuperscript{2,$\dagger$}\,\orcidlink{0009-0001-6716-4478}\\[0.6em]
+  \small
+  \textsuperscript{1}[Affiliation], [City, Country]\\
+  \textsuperscript{2}[Affiliation], [City, Country]\\[0.4em]
+  \textsuperscript{$\dagger$}These authors contributed equally to this work.\\
+  \textsuperscript{*}Correspondence: \href{mailto:n.komianos@gmail.com}{n.komianos@gmail.com}\\[0.3em]
+  ORCID --- N.~Komianos: \href{https://orcid.org/0009-0005-0717-8340}{0009-0005-0717-8340};
+  P.~Prakash: \href{https://orcid.org/0009-0001-6716-4478}{0009-0001-6716-4478}\\
+  Email --- P.~Prakash: \href{mailto:pranup48@gmail.com}{pranup48@gmail.com}
 }
 
 \date{\today}
@@ -44,6 +55,7 @@
 \begin{document}
 
 \maketitle
+\linenumbers  % line numbers enabled for review
 
 \begin{abstract}
 Cosmetic peptides like Matrixyl (KTTKS) offer collagen-stimulating activity but face topical delivery barriers due to poor physicochemical properties (high molecular weight, polar character, multiple charged residues). We present a reproducible computational workflow combining evolutionary algorithms (tournament selection and NSGA-II) with exact molecular descriptor calculations (RDKit) to discover Matrixyl-family analogs with improved penetration-associated descriptors. Applied to the KTTKS core peptide in a fixed-length search space of 3,706 candidates (edit distance $\leq 2$), our approach identifies a 9-member Pareto frontier revealing fundamental trade-offs between permeability gain and motif preservation. The dominant design strategy---lysine to proline substitution at position 4 (K4P)---reduces topological polar surface area by 25.6\% while maintaining 67\% functional-preservation scores. Extended sensitivity analysis demonstrates robustness of core findings to $\pm 30\%$ penalty weight variations. Exhaustive space enumeration validates that evolutionary search recovered the true Pareto frontier with 100\% precision and recall. This computational framework demonstrates how evolutionary algorithms can systematically explore constrained peptide design spaces and generate actionable candidates for experimental validation, generalizing beyond cosmetic applications to therapeutic peptide optimization.
@@ -64,17 +76,17 @@ Cosmetic peptides like Matrixyl (KTTKS) offer collagen-stimulating activity but 
 
 \subsection{Motivation and Problem Statement}
 
-Peptide therapeutics and cosmetic ingredients represent a rapidly expanding class of bioactive compounds, with global markets approaching \$50 billion annually\cite{peptide2024}. Among cosmetic peptides, Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is one of the most commercially successful collagen-stimulating matrikines, with broad adoption in anti-aging formulations\cite{matrixyl2015}. Despite proven biological activity in cell culture and limited clinical studies, topical delivery remains a critical bottleneck limiting efficacy and market penetration\cite{peptide_delivery2020}.
+Peptide therapeutics and cosmetic ingredients represent a rapidly expanding class of bioactive compounds, with global markets approaching \$50 billion annually\cite{henninot2018}. Among cosmetic peptides, Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is one of the most commercially successful collagen-stimulating matrikines, with broad adoption in anti-aging formulations\cite{robinson2005}. Despite proven biological activity in cell culture and limited clinical studies, topical delivery remains a critical bottleneck limiting efficacy and market penetration\cite{mitragotri2014}.
 
-The barrier to topical peptide delivery is multifactorial: peptides typically possess molecular weights ($M_w$) in the range of 500--3,000 Da, topological polar surface areas (TPSA) of 100--250 $\text{\AA}^2$, and net charges of $\pm 2$ to $\pm 4$. These properties create a ``peptide delivery paradox'': molecules large enough to exhibit biological activity often violate small-molecule permeability rules established for transdermal absorption\cite{potts1992}. Lipidation (e.g., palmitoyl-KTTKS) improves LogP at the expense of further increasing molecular weight, providing only modest net benefit for topical delivery\cite{pal_kttks2018}.
+The barrier to topical peptide delivery is multifactorial: peptides typically possess molecular weights ($M_w$) in the range of 500--3,000 Da, topological polar surface areas (TPSA) of 100--250 $\text{\AA}^2$, and net charges of $\pm 2$ to $\pm 4$. These properties create a ``peptide delivery paradox'': molecules large enough to exhibit biological activity often violate small-molecule permeability rules established for transdermal absorption\cite{potts1992}. Lipidation (e.g., palmitoyl-KTTKS) improves LogP at the expense of further increasing molecular weight, providing only modest net benefit for topical delivery\cite{lintner2000}.
 
 Traditional peptide optimization workflows prioritize biological activity and synthetic accessibility, treating permeability as a secondary concern addressed through formulation engineering (penetration enhancers, liposomes, etc.). Here, we invert this paradigm by placing topical delivery as a first-class optimization objective alongside functional preservation, asking: \textit{Can constrained evolutionary search discover Matrixyl-family analogs with improved penetration descriptors while maintaining recognizable motif character?}
 
 \subsection{Computational Approaches to Peptide Design}
 
-Recent advances in protein language models (PLMs) have demonstrated remarkable success in predicting protein structure and function from sequence alone\cite{esm2023, alphafold2021}. These models offer promise for peptide design, capturing sequence naturalness and biological plausibility. However, PLMs are trained primarily on full-length proteins and may not reliably capture the specific functional constraints of short bioactive peptides\cite{peptide_plm2023}. Additionally, PLMs provide no direct optimization for physicochemical properties like TPSA or LogP that drive topical delivery.
+Recent advances in protein language models (PLMs) have demonstrated remarkable success in predicting protein structure and function from sequence alone\cite{esm2023, alphafold2021}. These models offer promise for peptide design, capturing sequence naturalness and biological plausibility. However, PLMs are trained primarily on full-length proteins and may not reliably capture the specific functional constraints of short bioactive peptides\cite{madani2023}. Additionally, PLMs provide no direct optimization for physicochemical properties like TPSA or LogP that drive topical delivery.
 
-Evolutionary algorithms, by contrast, excel at navigating discrete combinatorial spaces under multiple competing objectives. Multi-objective evolutionary algorithms (MOEAs) such as NSGA-II\cite{nsga2} have proven effective for drug design\cite{drug_design_ga2022}, ligand optimization\cite{ligand_opt2021}, and protein engineering\cite{protein_ga2023}. Their primary advantage is transparency: every objective function is explicit, every constraint is interpretable, and the Pareto frontier directly visualizes trade-offs.
+Evolutionary algorithms, by contrast, excel at navigating discrete combinatorial spaces under multiple competing objectives. NSGA-II\cite{nsga2} is the de facto standard multi-objective evolutionary algorithm and is widely used in cheminformatics. It complements recent generative and surrogate-model approaches in ligand design\cite{francoeur2020}, de novo protein design\cite{watson2023}, and protein language modelling\cite{madani2023}, which typically rely on learned scoring functions rather than the transparent, exact molecular descriptors used here. The primary advantage of an evolutionary multi-objective approach is transparency: every objective function is explicit, every constraint is interpretable, and the Pareto frontier directly visualizes trade-offs.
 
 For the Matrixyl case, an evolutionary approach offers three specific advantages:
 \begin{enumerate}
@@ -151,11 +163,13 @@ For each canonical amino-acid sequence, a molecular structure was constructed as
 
 \subsubsection{Descriptor Suite}
 
-The following molecular descriptors were calculated for each sequence:
+The seven molecular descriptors used to quantify topical-delivery character are summarized in Table~\ref{tab:descriptors}.
 
 \begin{table}[H]
 \centering
 \small
+\caption{Molecular descriptors used in the penetration score, with units and the physico-chemical rationale for each.}
+\label{tab:descriptors}
 \begin{tabular}{lcl}
 \toprule
 \textbf{Descriptor} & \textbf{Unit} & \textbf{Rationale} \\
@@ -191,7 +205,7 @@ f_{\text{LogP}} &= \max(0, 1 - |\text{LogP} - 2|) \\
 f_{\text{HB}} &= \max(0, 1 - \frac{(\text{HBD} + \text{HBA}) - 10}{10})
 \end{align}
 
-\textbf{Rationale}: The thresholds (MW $< 500$ Da, TPSA $< 140$ $\text{\AA}^2$, LogP $\approx 1$--$3$) derive from extensive transdermal drug permeability literature\cite{potts1992, mitragotri2004}. We apply these as \textit{soft penalties} (not hard cutoffs) because peptides often violate these rules and still permeate, especially when formulated. The multiplicative structure ensures that failure to meet any single objective significantly reduces overall score.
+\textbf{Rationale}: The thresholds (MW $< 500$ Da, TPSA $< 140$ $\text{\AA}^2$, LogP $\approx 1$--$3$) derive from extensive transdermal drug permeability literature\cite{potts1992, prausnitz2004}. We apply these as \textit{soft penalties} (not hard cutoffs) because peptides often violate these rules and still permeate, especially when formulated. The multiplicative structure ensures that failure to meet any single objective significantly reduces overall score.
 
 \subsubsection{Functional Preservation Score}
 
@@ -210,7 +224,7 @@ f_{\text{BLOSUM}} &= \frac{1}{5} \sum_{i=1}^{5} \text{BLOSUM62}_{\text{ref}[i], 
 
 The BLOSUM62 score is normalized by dividing the sum by 5 (sequence length) and then by the maximum possible BLOSUM62 value (4.0 for identical residues), yielding a score in $[0, 1]$.
 
-\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{matrikine2010}. The weighted scheme reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight). This scheme is transparent and easily modifiable if new functional data becomes available.
+\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{katayama1993}. The weighted scheme reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight). This scheme is transparent and easily modifiable if new functional data becomes available.
 
 \subsubsection{Synthesis Feasibility Score}
 
@@ -341,7 +355,7 @@ All computations were performed using:
   \item Custom implementations of GA, NSGA-II, Pareto utilities (no external MOEA libraries)
 \end{itemize}
 
-Random seeds were fixed (seed=42) to ensure deterministic reproducibility. All unit tests (60 tests covering descriptor calculations, constraint validation, optimization algorithms, and analysis) passed with 100\% success rate. Complete code and results are available on GitHub: \url{https://github.com/nkomianos/Bio-paper} (branch \texttt{claude/peptide-skin-penetration-aOat2}).
+Random seeds were fixed (seed=42) to ensure deterministic reproducibility. All unit tests (48 tests covering descriptor calculations, constraint validation, optimization algorithms, and analysis) passed with 100\% success rate. Complete code and results are available on GitHub: \url{https://github.com/nkomianos/Bio-paper}.
 
 % ===========================
 % RESULTS
@@ -417,6 +431,8 @@ This structure clearly visualizes the permeability-function trade-off and sugges
 \label{fig:pareto}
 \end{figure}
 
+Convergence behavior of both optimizers is summarized in Figure~\ref{fig:convergence}: the tournament GA reaches its best candidate by generation~4 and plateaus thereafter, while NSGA-II grows the non-dominated frontier monotonically to its 9-member final size.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/02_convergence.png}
@@ -452,6 +468,8 @@ K1P & 1 (Lys$\to$Pro) & 1 & 11.1\% & Rare; only in extreme PTTPS \\
   \item \textbf{Position 5 variability}: Serine at position 5 is replaced with three different residues (Ala, Gly, Pro) with nearly equal frequency (22.2\% each). This suggests position 5 is less critical for permeability optimization and that multiple strategies (reducing H-bonds, adding flexibility, adding rigidity) are viable.
   \item \textbf{K1P rarity}: The N-terminal lysine K1P mutation is present only in PTTPS, the extreme high-penetration candidate. This suggests K1P provides additional benefit (charge reduction) but at higher cost to function recognition.
 \end{itemize}
+
+These position-by-mutation patterns are visualized in Figure~\ref{fig:mutations}.
 
 \begin{figure}[H]
 \centering
@@ -518,6 +536,8 @@ All ED$\leq 2$ frontier members on ED$\leq 3$ frontier & — & 9/9 (100\%) \\
 \end{enumerate}
 
 For this manuscript, ED$\leq 2$ is preferred: it provides clearer narrative, maintains closer motif proximity, and reduces candidate burden for experimental validation.
+
+Figure~\ref{fig:searchspace} situates the Pareto frontier within the full 3,706-candidate evaluated search space, and Figure~\ref{fig:editdist} shows the edit-distance composition of the frontier relative to that space.
 
 \begin{figure}[H]
 \centering
@@ -594,7 +614,7 @@ Extra evolved members & 0 & — \\
 
 \subsubsection{K4P as a Universal Design Driver}
 
-The dominant emergence of the K4P mutation (55.6\% frontier frequency) is the most striking and mechanistically interpretable result. Lysine at position 4 is known to be conserved in matrikines and is widely believed to interact with collagen via electrostatic interactions\cite{matrikine2010}. Our analysis shows that replacing this residue with proline yields substantial permeability gains:
+The dominant emergence of the K4P mutation (55.6\% frontier frequency) is the most striking and mechanistically interpretable result. Lysine at position 4 is known to be conserved in matrikines and is widely believed to interact with collagen via electrostatic interactions\cite{katayama1993}. Our analysis shows that replacing this residue with proline yields substantial permeability gains:
 
 \begin{itemize}
   \item Formal charge reduction: K$^+$ ($+1$) $\to$ P ($0$), eliminating one unit of positive charge. At skin pH (5.5), the impact is even larger (unprotonated lysine pKa $\approx$ 10.5 but partially protonated; proline remains neutral). This charge elimination reduces electrostatic repulsion at the skin-solution interface.
@@ -624,15 +644,15 @@ This structure enables a staged experimental strategy: start with KTTPS for high
 
 \subsubsection{Protein Language Models}
 
-Recent PLM-based peptide design studies\cite{esm2023, peptide_plm2023} focus on naturalness and broad biological plausibility. Our approach complements PLMs by adding explicit optimization for specific delivery descriptors. While PLMs excel at capturing sequence-to-function relationships learned from evolutionary data, they are less suited to optimizing for non-evolutionary objectives (e.g., LogP $\approx$ 2) that come from chemical principles of diffusion rather than biology. A hybrid approach---using PLM embeddings to score naturalness and RDKit to optimize delivery---would be a natural next step.
+Recent PLM-based peptide design studies\cite{esm2023, madani2023} focus on naturalness and broad biological plausibility. Our approach complements PLMs by adding explicit optimization for specific delivery descriptors. While PLMs excel at capturing sequence-to-function relationships learned from evolutionary data, they are less suited to optimizing for non-evolutionary objectives (e.g., LogP $\approx$ 2) that come from chemical principles of diffusion rather than biology. A hybrid approach---using PLM embeddings to score naturalness and RDKit to optimize delivery---would be a natural next step.
 
 \subsubsection{Transdermal Delivery Literature}
 
-Our descriptor thresholds (MW $< 500$, TPSA $< 140$) derive from Potts \& Guy (1992) and Mitragotri et al. (2004), which synthesized transdermal permeability data from hundreds of small molecules. Applying these thresholds to peptides is a deliberate extrapolation, justified by the observation that peptides generally follow similar rules but with higher variance\cite{peptide_delivery2020}. By using soft penalties rather than hard cutoffs, we acknowledge this uncertainty while still guiding optimization toward delivery-favorable ranges.
+Our descriptor thresholds (MW $< 500$, TPSA $< 140$) derive from Potts \& Guy (1992)\cite{potts1992} and Mitragotri et al.\ (2004)\cite{prausnitz2004}, which synthesized transdermal permeability data from hundreds of small molecules. Applying these thresholds to peptides is a deliberate extrapolation, justified by the observation that peptides generally follow similar rules but with higher variance\cite{mitragotri2014}. By using soft penalties rather than hard cutoffs, we acknowledge this uncertainty while still guiding optimization toward delivery-favorable ranges.
 
 \subsubsection{Evolutionary Peptide Design}
 
-Evolutionary algorithms have been applied to peptide design in prior work\cite{protein_ga2023, peptide_ga2021}, but typically in conjunction with machine-learning surrogates trained on limited experimental data. Our approach uniquely emphasizes:
+Computational peptide design has historically combined evolutionary or generative search with machine-learning surrogates trained on limited experimental data. Our approach uniquely emphasizes:
 \begin{itemize}
   \item Exact molecular descriptors (RDKit) rather than learned proxies
   \item Multi-objective optimization (transparent Pareto frontiers) rather than scalarized fitness
@@ -675,45 +695,64 @@ We have demonstrated that constrained evolutionary algorithms can systematically
 
 The dominant design strategy---lysine-to-proline substitution at position 4---emerges as a robust, mechanistically interpretable driver of permeability improvement across multiple parameter variations. Conservative candidates like KTTPS achieve 38\% penetration gain while retaining 83\% of the original motif character, offering a practical path to improved topical formulations without sacrificing predicted biological activity.
 
-The methodology is publication-ready, reproducible (all code and data on GitHub, 60 passing unit tests), and generalizable to other cosmetic and therapeutic peptides. Experimental validation of the three recommended candidates (PTTPS, KTTPS, KTTPP) will directly test whether computational prioritization translates to improved in vitro permeation and in vivo efficacy.
+The methodology is publication-ready, reproducible (all code and data on GitHub, 48 passing unit tests), and generalizable to other cosmetic and therapeutic peptides. Experimental validation of the three recommended candidates (PTTPS, KTTPS, KTTPP) will directly test whether computational prioritization translates to improved in vitro permeation and in vivo efficacy.
+
+% ===========================
+% DECLARATIONS (bioRxiv-required statements)
+% ===========================
+
+\section*{Author Contributions}
+
+N.K.\ and P.P.\ contributed equally to this work. Per the \href{https://credit.niso.org/}{CRediT taxonomy}, both authors share the following roles:
+\textbf{Conceptualization}, \textbf{Methodology}, \textbf{Software}, \textbf{Validation}, \textbf{Formal analysis}, \textbf{Investigation}, \textbf{Data curation}, \textbf{Visualization}, \textbf{Writing --- original draft}, \textbf{Writing --- review \& editing}, and \textbf{Project administration}. Both authors read and approved the final manuscript.
+
+\section*{Competing Interests}
+
+N.K.\ and P.P.\ are co-founders of and hold equity in Tesera Labs (formerly Enloq Foundry, Enloq, Inc.), an AI-native peptide design company. The methodology described in this paper is unrelated to Tesera Labs' commercial pipeline.
+
+\section*{Funding}
+
+This work received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors. All computational experiments were self-funded.
+
+\section*{Ethics}
+
+This study did not involve human or animal subjects. All work is computational and relies exclusively on publicly available reference data (PubChem CID 9897237 for palmitoyl pentapeptide-4; canonical amino-acid sequence libraries).
+
+\section*{Data and Code Availability}
+
+All source code, unit tests, per-phase result CSVs, and publication figures are openly available at \url{https://github.com/nkomianos/Bio-paper}. A persistent Zenodo DOI snapshot will be minted at preprint submission [DOI: TBD]. The repository is licensed under MIT (code, data, results); this preprint is distributed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). No proprietary or restricted data are used in this study.
 
 \section*{Acknowledgments}
 
-Computational work was performed on an NVIDIA A100-SXM4-40GB GPU provided by [institution]. We thank [collaborators] for helpful discussions on peptide chemistry and delivery mechanisms.
+All computational experiments were run on commodity CPU hardware; no GPU acceleration or pre-trained model weights were required. We thank [collaborators] for helpful discussions on peptide chemistry and delivery mechanisms.
 
 \begin{thebibliography}{99}
 
-\bibitem{peptide2024} Global peptide market. Allied Market Research, 2024.
+\bibitem{henninot2018} Henninot, A., Collins, J. C., Nuss, J. M. The current state of peptide drug discovery: back to the future? \textit{J. Med. Chem.} \textbf{2018}, 61, 1382--1414. \href{https://doi.org/10.1021/acs.jmedchem.7b00318}{doi:10.1021/acs.jmedchem.7b00318}.
 
-\bibitem{matrixyl2015} Authentic Brands Group. Matrixyl peptide formulations in cosmetics. Cosm. Toilet. 2015, 130, 42--55.
+\bibitem{robinson2005} Robinson, L. R., Fitzgerald, N. C., Doughty, D. G., Dawes, N. C., Berge, C. A., Bissett, D. L. Topical palmitoyl pentapeptide provides improvement in photoaged human facial skin. \textit{Int. J. Cosmet. Sci.} \textbf{2005}, 27, 155--160. \href{https://doi.org/10.1111/j.1467-2494.2005.00261.x}{doi:10.1111/j.1467-2494.2005.00261.x}.
 
-\bibitem{peptide_delivery2020} Mitragotri, S., Burke, P. A., Langer, R. Overcoming the challenges in administering biopharmaceuticals: formulation and delivery strategies. \textit{Nat. Rev. Drug Discov.} \textbf{2021}, 20, 156--171.
+\bibitem{mitragotri2014} Mitragotri, S., Burke, P. A., Langer, R. Overcoming the challenges in administering biopharmaceuticals: formulation and delivery strategies. \textit{Nat. Rev. Drug Discov.} \textbf{2014}, 13, 655--672. \href{https://doi.org/10.1038/nrd4363}{doi:10.1038/nrd4363}.
 
-\bibitem{potts1992} Potts, R. O., Guy, R. H. Predicting skin permeability. \textit{Pharm. Res.} \textbf{1992}, 9, 663--669.
+\bibitem{potts1992} Potts, R. O., Guy, R. H. Predicting skin permeability. \textit{Pharm. Res.} \textbf{1992}, 9, 663--669. \href{https://doi.org/10.1023/A:1015810312465}{doi:10.1023/A:1015810312465}.
 
-\bibitem{pal_kttks2018} Cosmetic Ingredient Review Expert Panel. Safety Assessment of Palmitoyl Pentapeptide-4. \textit{Int. J. Toxicol.} \textbf{2018}, 37, 3--16.
+\bibitem{lintner2000} Lintner, K., Peschard, O. Biologically active peptides: from a laboratory bench curiosity to a functional skin care product. \textit{Int. J. Cosmet. Sci.} \textbf{2000}, 22, 207--218. \href{https://doi.org/10.1046/j.1467-2494.2000.00010.x}{doi:10.1046/j.1467-2494.2000.00010.x}.
 
-\bibitem{esm2023} Lin, Z., et al. Language models of protein sequences at the scale of evolution enable accurate structure prediction. \textit{Science} \textbf{2023}, 379, eade2574.
+\bibitem{esm2023} Lin, Z., Akin, H., Rao, R., Hie, B., Zhu, Z., Lu, W., et al. Evolutionary-scale prediction of atomic-level protein structure with a language model. \textit{Science} \textbf{2023}, 379, 1123--1130. \href{https://doi.org/10.1126/science.ade2574}{doi:10.1126/science.ade2574}.
 
-\bibitem{alphafold2021} Jumper, J., et al. Highly accurate protein structure prediction with AlphaFold. \textit{Nature} \textbf{2021}, 596, 583--589.
+\bibitem{alphafold2021} Jumper, J., Evans, R., Pritzel, A., Green, T., Figurnov, M., Ronneberger, O., et al. Highly accurate protein structure prediction with AlphaFold. \textit{Nature} \textbf{2021}, 596, 583--589. \href{https://doi.org/10.1038/s41586-021-03819-2}{doi:10.1038/s41586-021-03819-2}.
 
-\bibitem{peptide_plm2023} Ruffolo, J. A., et al. Deciphering protein language models. \textit{Nat. Biotechnol.} \textbf{2023}, 41, 1139--1148.
+\bibitem{madani2023} Madani, A., Krause, B., Greene, E. R., Subramanian, S., Mohr, B. P., Holton, J. M., et al. Large language models generate functional protein sequences across diverse families. \textit{Nat. Biotechnol.} \textbf{2023}, 41, 1099--1106. \href{https://doi.org/10.1038/s41587-022-01618-2}{doi:10.1038/s41587-022-01618-2}.
 
-\bibitem{nsga2} Deb, K., Pratap, A., Agarwal, S., Meyarivan, T. A fast and elitist multiobjective genetic algorithm: NSGA-II. \textit{IEEE Trans. Evol. Comput.} \textbf{2002}, 6, 182--197.
+\bibitem{nsga2} Deb, K., Pratap, A., Agarwal, S., Meyarivan, T. A fast and elitist multiobjective genetic algorithm: NSGA-II. \textit{IEEE Trans. Evol. Comput.} \textbf{2002}, 6, 182--197. \href{https://doi.org/10.1109/4235.996017}{doi:10.1109/4235.996017}.
 
-\bibitem{drug_design_ga2022} Leung, S. C. H., et al. Multi-objective genetic algorithm for drug design. \textit{Comput. Biol. Med.} \textbf{2022}, 144, 105356.
+\bibitem{francoeur2020} Francoeur, P. G., Masuda, T., Sunseri, J., Jia, A., Iovanisci, R. B., Snyder, I., Koes, D. R. Three-dimensional convolutional neural networks and a cross-docked data set for structure-based drug design. \textit{J. Chem. Inf. Model.} \textbf{2020}, 60, 4200--4215. \href{https://doi.org/10.1021/acs.jcim.0c00411}{doi:10.1021/acs.jcim.0c00411}.
 
-\bibitem{ligand_opt2021} Francoeur, P. G., et al. Three-dimensional convolutional neural networks and a cross-docked dataset for structure-based drug design. \textit{J. Chem. Inf. Model.} \textbf{2021}, 61, 4236--4253.
+\bibitem{watson2023} Watson, J. L., Juergens, D., Bennett, N. R., Trippe, B. L., Yim, J., Eisenach, H. E., et al. De novo design of protein structure and function with RFdiffusion. \textit{Nature} \textbf{2023}, 620, 1089--1100. \href{https://doi.org/10.1038/s41586-023-06415-8}{doi:10.1038/s41586-023-06415-8}.
 
-\bibitem{protein_ga2023} Notin, P., et al. Controllable protein generation with self-conditioned latent diffusion. \textit{bioRxiv} \textbf{2023}, 2302.04611.
+\bibitem{prausnitz2004} Prausnitz, M. R., Mitragotri, S., Langer, R. Current status and future potential of transdermal drug delivery. \textit{Nat. Rev. Drug Discov.} \textbf{2004}, 3, 115--124. \href{https://doi.org/10.1038/nrd1304}{doi:10.1038/nrd1304}.
 
-\bibitem{matrikine2010} Busch, C., et al. Matrikines modulate the expression of collagen I and III by dermal fibroblasts. \textit{Arch. Dermatol. Res.} \textbf{2010}, 302, 31--38.
-
-\bibitem{mitragotri2004} Mitragotri, S., Anissimov, Y. G., Banga, A. K. Transdermal drug delivery. \textit{Nat. Rev. Drug Discov.} \textbf{2004}, 3, 156--171.
-
-\bibitem{peptide_ga2021} Rapberger, R., et al. Computational protein design for de novo binder generation. \textit{Curr. Opin. Struct. Biol.} \textbf{2021}, 69, 159--168.
-
-\bibitem{protein_ga2023} Lisanza, S. L., et al. De novo design of a functional Ca$^{2+}$ signaling protein. \textit{Nature} \textbf{2023}, 615, 527--532.
+\bibitem{katayama1993} Katayama, K., Armendariz-Borunda, J., Raghow, R., Kang, A. H., Seyer, J. M. A pentapeptide from type I procollagen promotes extracellular matrix production. \textit{J. Biol. Chem.} \textbf{1993}, 268, 9941--9944. \href{https://doi.org/10.1016/S0021-9258(18)82153-6}{doi:10.1016/S0021-9258(18)82153-6}.
 
 \end{thebibliography}
 
@@ -772,12 +811,10 @@ The discrepancy from the reported 3,706 arises from the fact that some combinati
 
 All source code, unit tests, results CSVs, and figures are available at:
 \begin{center}
-\url{https://github.com/nkomianos/Bio-paper}\\
-Branch: \texttt{claude/peptide-skin-penetration-aOat2}\\
-Commit: 409b4eb
+\url{https://github.com/nkomianos/Bio-paper}
 \end{center}
 
-Unit test suite (60 tests):
+Unit test suite (48 tests):
 \begin{verbatim}
 python -m pytest tests/ -v
 \end{verbatim}

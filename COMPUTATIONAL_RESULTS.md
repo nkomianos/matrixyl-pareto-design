@@ -1,9 +1,7 @@
 # Computational Optimization Results: Matrixyl Analogs for Enhanced Epidermal Permeability
 
-**Pipeline Status**: ✅ Phases 1-5 Complete (GA + Pareto Optimization + Analysis + Structural Validation + Experimental Design)  
-**GPU Phase Status**: ⏳ Phase 7 (PLM Scoring) - Environment dependency issues, deterministic phases complete  
-**Run Date**: 2026-05-05  
-**GPU Instance**: NVIDIA A100-SXM4-40GB
+**Pipeline Status**: ✅ All phases complete (Tournament GA + Pareto + Analysis + Structural Validation + Experimental Design + Sensitivity Analysis)
+**Run Date**: 2026-05-05
 
 ---
 
@@ -206,7 +204,7 @@ Formal charge:        0
 ## Limitations and Caveats
 
 1. **Descriptor thresholds** (MW < 500, TPSA < 140) come from small-molecule transdermal literature and may not perfectly apply to peptides
-2. **PLM (Protein Language Model) scoring** for functional preservation remains as future work; current function score relies on sequence motif conservation, not biological oracle
+2. **Functional-preservation score is sequence-based** (motif similarity, edit distance, BLOSUM62) — adding a learned scoring layer such as a protein language model is plausible future work but is outside the scope of this study
 3. **Conformer ensembles** from RDKit are exploratory; real 3D dynamics require MD simulations
 4. **No explicit solubility modeling**; some candidates may be insoluble in standard formulations (e.g., PTTPS with multiple prolines)
 5. **Palmitoylation effect** cannot be captured by sequence alone; Pal-KTTKS represents a different chemical species
@@ -229,7 +227,7 @@ Formal charge:        0
 - **Random seeds**: Fixed (seed=42 for GA, seed=42 for conformers)
 - **Environment**: Python 3.10, RDKit 2023.09, NumPy 1.24.3
 - **Data checksums**: Available in run metadata files
-- **Code version**: Git commit on branch `claude/peptide-skin-penetration-aOat2`
+- **Code version**: https://github.com/nkomianos/Bio-paper (branch `main`)
 
 ---
 

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate publication-ready figures for the paper."""
+"""Generate publication-ready figures for the paper.
+
+Reads phase-1 through phase-3 result CSVs from ``results/`` and writes the
+five manuscript figures directly into ``manuscript/figures/`` so the LaTeX
+build always sees the same artifacts the script produced. All paths are
+anchored to the repository root, so the script can be invoked from any CWD.
+"""
 
 import pandas as pd
 import numpy as np
@@ -12,18 +18,20 @@ plt.rcParams['figure.dpi'] = 300
 plt.rcParams['font.size'] = 10
 plt.rcParams['font.family'] = 'sans-serif'
 
-OUTPUT_DIR = Path("results/figures")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+RESULTS_DIR = REPO_ROOT / "results"
+OUTPUT_DIR = REPO_ROOT / "manuscript" / "figures"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def fig_pareto_frontier():
     """Figure 1: Pareto frontier - penetration vs functional preservation."""
-    df = pd.read_csv("results/phase2_pareto/pareto_frontier.csv")
+    df = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "pareto_frontier.csv")
 
     fig, ax = plt.subplots(figsize=(8, 6))
 
     # All evaluated candidates in background
-    all_df = pd.read_csv("results/phase2_pareto/evaluated_candidates.csv")
+    all_df = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "evaluated_candidates.csv")
     ax.scatter(all_df['penetration_objective'], all_df['functional_objective'],
               alpha=0.15, s=20, c='gray', label='Evaluated candidates')
 
@@ -58,8 +66,8 @@ def fig_pareto_frontier():
 
 def fig_convergence_comparison():
     """Figure 2: Convergence curves - Tournament GA vs NSGA-II."""
-    conv_ga = pd.read_csv("results/phase1_tournament/convergence.csv")
-    conv_pareto = pd.read_csv("results/phase2_pareto/convergence.csv")
+    conv_ga = pd.read_csv(RESULTS_DIR / "phase1_tournament" / "convergence.csv")
+    conv_pareto = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "convergence.csv")
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -82,7 +90,7 @@ def fig_convergence_comparison():
         ax2.set_ylabel('Pareto Frontier Size', fontsize=11)
     else:
         # Fallback: plot best penetration over generations
-        all_df = pd.read_csv("results/phase2_pareto/evaluated_candidates.csv")
+        all_df = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "evaluated_candidates.csv")
         best_by_gen = all_df.groupby('generation')['penetration_objective'].max()
         ax2.plot(best_by_gen.index, best_by_gen.values,
                 marker='s', linewidth=2, markersize=4, label='Best penetration')
@@ -94,15 +102,15 @@ def fig_convergence_comparison():
     ax2.legend()
 
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "02_convergence_curves.png", dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / "02_convergence.png", dpi=300, bbox_inches='tight')
     plt.close()
     print("✓ Figure 2: Convergence curves")
 
 
 def fig_mutation_analysis():
     """Figure 3: Mutation enrichment heatmap."""
-    df = pd.read_csv("results/phase3_analysis/mutation_enrichment.csv")
-    frontier = pd.read_csv("results/phase2_pareto/pareto_frontier.csv")
+    df = pd.read_csv(RESULTS_DIR / "phase3_analysis" / "mutation_enrichment.csv")
+    frontier = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "pareto_frontier.csv")
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -133,70 +141,20 @@ def fig_mutation_analysis():
 
     cbar = plt.colorbar(im, ax=ax, label='Frequency')
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "03_mutation_enrichment.png", dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / "03_mutations.png", dpi=300, bbox_inches='tight')
     plt.close()
     print("✓ Figure 3: Mutation enrichment")
 
 
-def fig_descriptor_comparison():
-    """Figure 4: Baseline vs evolved candidates descriptor profiles."""
-    baseline = pd.read_csv("results/phase3_analysis/baseline_comparison.csv")
-    frontier = pd.read_csv("results/phase2_pareto/pareto_frontier.csv")
-
-    # Extract key candidates
-    candidates = ['KTTKS', 'PTTPS', 'KTTPS', 'KTTPP']
-
-    descriptors = ['molecular_weight', 'tpsa', 'logp', 'hbd', 'hba']
-    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
-    axes = axes.flatten()
-
-    for idx, desc in enumerate(descriptors):
-        ax = axes[idx]
-        values = []
-        names = []
-
-        # Add baselines
-        for _, row in baseline.iterrows():
-            if row['name'] in candidates:
-                values.append(row[desc])
-                names.append(row['name'])
-
-        # Add evolved
-        for _, row in frontier.iterrows():
-            if row['sequence'] in candidates:
-                values.append(row[desc])
-                names.append(row['sequence'])
-
-        colors = ['#1f77b4' if n in ['KTTKS', 'Pal-KTTKS'] else '#ff7f0e' for n in names]
-        ax.bar(range(len(values)), values, color=colors, alpha=0.7, edgecolor='black')
-        ax.set_xticks(range(len(names)))
-        ax.set_xticklabels(names, rotation=45, ha='right')
-        ax.set_ylabel(desc.replace('_', ' ').title(), fontsize=10)
-        ax.set_title(f'{desc.replace("_", " ").title()} Profile', fontsize=11, fontweight='bold')
-        ax.grid(True, alpha=0.3, axis='y')
-
-    # Hide last subplot
-    axes[-1].axis('off')
-
-    # Add legend
-    from matplotlib.patches import Patch
-    legend_elements = [
-        Patch(facecolor='#1f77b4', alpha=0.7, edgecolor='black', label='Baseline (KTTKS/Pal-KTTKS)'),
-        Patch(facecolor='#ff7f0e', alpha=0.7, edgecolor='black', label='Evolved candidates'),
-    ]
-    axes[-1].legend(handles=legend_elements, loc='center', fontsize=11)
-
-    plt.suptitle('Descriptor Profiles: Baseline vs Evolved', fontsize=14, fontweight='bold', y=0.995)
-    plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "04_descriptor_comparison.png", dpi=300, bbox_inches='tight')
-    plt.close()
-    print("✓ Figure 4: Descriptor comparison")
+# Note: a per-descriptor bar-panel comparison was retired from the manuscript;
+# the same information is presented in Table 2 (baseline comparison) and the
+# baseline_comparison.csv data file under results/phase3_analysis/.
 
 
 def fig_search_space_visualization():
-    """Figure 5: Search space visualization - all candidates colored by edit distance."""
-    all_df = pd.read_csv("results/phase2_pareto/evaluated_candidates.csv")
-    frontier = pd.read_csv("results/phase2_pareto/pareto_frontier.csv")
+    """Figure 4: Search space visualization - all candidates colored by edit distance."""
+    all_df = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "evaluated_candidates.csv")
+    frontier = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "pareto_frontier.csv")
 
     fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -226,15 +184,15 @@ def fig_search_space_visualization():
     ax.legend(loc='best', fontsize=10)
 
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "05_search_space_visualization.png", dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / "04_search_space.png", dpi=300, bbox_inches='tight')
     plt.close()
-    print("✓ Figure 5: Search space visualization")
+    print("✓ Figure 4: Search space visualization")
 
 
 def fig_edit_distance_distribution():
-    """Figure 6: Edit distance distribution in frontier vs full space."""
-    all_df = pd.read_csv("results/phase2_pareto/evaluated_candidates.csv")
-    frontier = pd.read_csv("results/phase2_pareto/pareto_frontier.csv")
+    """Figure 5: Edit distance distribution in frontier vs full space."""
+    all_df = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "evaluated_candidates.csv")
+    frontier = pd.read_csv(RESULTS_DIR / "phase2_pareto" / "pareto_frontier.csv")
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -255,9 +213,9 @@ def fig_edit_distance_distribution():
     ax2.grid(True, alpha=0.3, axis='y')
 
     plt.tight_layout()
-    plt.savefig(OUTPUT_DIR / "06_edit_distance_distribution.png", dpi=300, bbox_inches='tight')
+    plt.savefig(OUTPUT_DIR / "05_edit_distance.png", dpi=300, bbox_inches='tight')
     plt.close()
-    print("✓ Figure 6: Edit distance distribution")
+    print("✓ Figure 5: Edit distance distribution")
 
 
 def main():
@@ -268,7 +226,6 @@ def main():
         fig_pareto_frontier()
         fig_convergence_comparison()
         fig_mutation_analysis()
-        fig_descriptor_comparison()
         fig_search_space_visualization()
         fig_edit_distance_distribution()
 

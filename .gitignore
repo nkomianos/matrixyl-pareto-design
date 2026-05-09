@@ -52,15 +52,25 @@ venv.bak/
 # pyenv
 .python-version
 
-# Results and data
-# Note: results/figures/ and gpu_results/ ARE tracked for reproducibility
-# Only ignore temporary result directories
+# Results
+# Per-phase outputs under results/ are tracked for reproducibility.
+# Only ignore scratch / debug subdirectories.
 results/temp/
 results/debug/
-# Don't ignore CSV, allow figures and key results to be committed
-# *.csv  # Removed to track key results
 *.xlsx
 *.xls
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+manuscript/main.pdf
 
 # Model weights
 *.pt

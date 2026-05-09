@@ -9,7 +9,6 @@ from .constraints import PenetrationScore, PhysicochemicalCalculator
 from .chemistry import MolecularDescriptors
 from .experimental_design import CompactnessRow, SynthesisCandidate
 from .function_scores import FunctionalPreservationScore, FunctionalPreservationScorer
-from .plm_pipeline import TorchStatus
 from .pareto_search import (
     ParetoCandidate,
     ParetoGenerationSummary,
@@ -32,7 +31,6 @@ __all__ = [
     'CandidateEvaluation',
     'CandidateEvaluator',
     'CandidateRow',
-    'EnsembleOracle',
     'CompactnessRow',
     'FunctionalPreservationScore',
     'FunctionalPreservationScorer',
@@ -48,32 +46,10 @@ __all__ = [
     'SearchSpaceRules',
     'SearchSpaceValidation',
     'SynthesisCandidate',
-    'TorchStatus',
     'ConformerEnsembleSummary',
     'ConformerMetrics',
     'GenerationSummary',
     'TournamentSearchConfig',
     'TournamentSearchOptimizer',
     'TournamentSearchResult',
-    'EvolutionaryOptimizer',
-    'PeptideSequenceVariable',
 ]
-
-
-def __getattr__(name):
-    """Lazy-load optional heavy modules only when their exports are requested."""
-    if name == 'EnsembleOracle':
-        from .oracle import EnsembleOracle
-
-        return EnsembleOracle
-
-    if name in {'EvolutionaryOptimizer', 'PeptideSequenceVariable'}:
-        from .evolutionary_algorithm import EvolutionaryOptimizer, PeptideSequenceVariable
-
-        exports = {
-            'EvolutionaryOptimizer': EvolutionaryOptimizer,
-            'PeptideSequenceVariable': PeptideSequenceVariable,
-        }
-        return exports[name]
-
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

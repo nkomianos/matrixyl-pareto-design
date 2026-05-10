@@ -62,7 +62,7 @@ Cosmetic peptides like Matrixyl (KTTKS) offer collagen-stimulating activity but 
 
 \smallskip
 \noindent
-\textbf{Keywords:} peptide design, evolutionary algorithms, NSGA-II, topical delivery, constrained optimization, Pareto frontier
+\textbf{Keywords:} peptide design, NSGA-II, topical delivery, Pareto frontier, Matrixyl, matrikine
 \end{abstract}
 
 \newpage
@@ -90,7 +90,7 @@ Evolutionary algorithms, by contrast, excel at navigating discrete combinatorial
 
 For the Matrixyl case, an evolutionary approach offers three specific advantages:
 \begin{enumerate}
-  \item \textbf{Explicit control over objectives}: We can quantify both penetration (TPSA, MW, LogP) and function (motif preservation, edit distance) simultaneously.
+  \item \textbf{Explicit control over objectives}: We can quantify both penetration (TPSA, $M_w$, LogP) and function (motif preservation, edit distance) simultaneously.
   \item \textbf{Exhaustive validation}: The small search space (3,706 candidates for ED $\leq 2$) permits enumeration of the entire neighborhood, enabling ground-truth validation of algorithm performance.
   \item \textbf{Interpretability}: Every mutation can be mechanistically explained in terms of descriptor changes, facilitating hypothesis generation for experiments.
 \end{enumerate}
@@ -143,7 +143,7 @@ To maintain biological plausibility and tractability, the search space was const
 For validation and benchmarking, the following control molecules were evaluated through the same scoring pipeline:
 \begin{itemize}
   \item \textbf{KTTKS}: Unmodified Matrixyl core (baseline reference).
-  \item \textbf{Pal-KTTKS}: N-terminal palmitoyl-conjugated KTTKS (MW 802.07 Da, SMILES from PubChem CID 9897237).
+  \item \textbf{Pal-KTTKS}: N-terminal palmitoyl-conjugated KTTKS ($M_w$~802.07~Da, SMILES from PubChem CID 9897237).
   \item \textbf{GPKGDPGA}: Collagen-like control motif (previously used in early iterations; included for completeness).
 \end{itemize}
 
@@ -174,7 +174,7 @@ The seven molecular descriptors used to quantify topical-delivery character are 
 \toprule
 \textbf{Descriptor} & \textbf{Unit} & \textbf{Rationale} \\
 \midrule
-Molecular Weight & Da & Increased MW limits passive diffusion \\
+Molecular weight ($M_w$) & Da & Increased $M_w$ limits passive diffusion \\
 TPSA (Topological Polar SA) & $\text{\AA}^2$ & Polar surface area inversely correlated with permeability \\
 LogP (octanol-water partition) & -- & Lipophilicity; optimal range 1--3 for transdermal \\
 H-bond donors & count & More donors $\Rightarrow$ more favorable polar interactions with SC \\
@@ -195,17 +195,18 @@ The penetration score is a composite normalized metric (range $[0, 1]$) that pen
 
 \begin{equation}
 \text{penetration\_score} = \max(0.01, f_{\text{MW}} \cdot f_{\text{TPSA}} \cdot f_{\text{LogP}} \cdot f_{\text{HB}})
+\label{eq:penetration_score}
 \end{equation}
 
 where:
 \begin{align}
-f_{\text{MW}} &= \max(0, 1 - \frac{\text{|MW} - 500\text{|}}{100}) \\
+f_{\text{MW}} &= \max\!\left(0,\, 1 - \frac{|M_w - 500|}{100}\right) \\
 f_{\text{TPSA}} &= \max(0, 1 - \frac{\text{max}(0, \text{TPSA} - 140)}{100}) \\
 f_{\text{LogP}} &= \max(0, 1 - |\text{LogP} - 2|) \\
 f_{\text{HB}} &= \max(0, 1 - \frac{(\text{HBD} + \text{HBA}) - 10}{10})
 \end{align}
 
-\textbf{Rationale}: The thresholds (MW $< 500$ Da, TPSA $< 140$ $\text{\AA}^2$, LogP $\approx 1$--$3$) derive from extensive transdermal drug permeability literature\cite{potts1992, prausnitz2004}. We apply these as \textit{soft penalties} (not hard cutoffs) because peptides often violate these rules and still permeate, especially when formulated. The multiplicative structure ensures that failure to meet any single objective significantly reduces overall score.
+\textbf{Rationale}: The thresholds ($M_w < 500$~Da, TPSA $< 140$ $\text{\AA}^2$, LogP $\approx 1$--$3$) derive from extensive transdermal drug permeability literature\cite{potts1992, prausnitz2004}. We apply these as \textit{soft penalties} (not hard cutoffs) because peptides often violate these rules and still permeate, especially when formulated. The multiplicative structure of Eq.~\ref{eq:penetration_score} ensures that failure to meet any single objective significantly reduces overall score.
 
 \subsubsection{Functional Preservation Score}
 
@@ -213,6 +214,7 @@ The functional preservation score (range $[0, 1]$) quantifies how much a candida
 
 \begin{equation}
 \text{function\_score} = 0.40 \cdot f_{\text{id}} + 0.40 \cdot f_{\text{ED}} + 0.20 \cdot f_{\text{BLOSUM}}
+\label{eq:function_score}
 \end{equation}
 
 where:
@@ -224,7 +226,7 @@ f_{\text{BLOSUM}} &= \frac{1}{5} \sum_{i=1}^{5} \text{BLOSUM62}_{\text{ref}[i], 
 
 The BLOSUM62 score is normalized by dividing the sum by 5 (sequence length) and then by the maximum possible BLOSUM62 value (4.0 for identical residues), yielding a score in $[0, 1]$.
 
-\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{katayama1993}. The weighted scheme reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight). This scheme is transparent and easily modifiable if new functional data becomes available.
+\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{katayama1993}. The weighted scheme of Eq.~\ref{eq:function_score} reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight). This scheme is transparent and easily modifiable if new functional data becomes available.
 
 \subsubsection{Synthesis Feasibility Score}
 
@@ -232,6 +234,7 @@ For the initial fixed-length ED$\leq 2$ search space using only canonical amino 
 
 \begin{equation}
 \text{synthesis\_score} = 1.0 \quad \text{(for all candidates)}
+\label{eq:synthesis_score}
 \end{equation}
 
 This score was defined to allow future extension to non-canonical residues or modified backbones, where synthesis complexity could be explicitly penalized.
@@ -309,7 +312,7 @@ The evolutionary frontier was then compared against the exhaustive frontier to c
 To assess robustness, Phase 2 was re-run with $\pm 30\%$ variations in penalty weights:
 \begin{itemize}
   \item TPSA penalty multiplied by 0.7, 1.0, 1.3
-  \item MW penalty multiplied by 0.7, 1.0, 1.3
+  \item $M_w$ penalty multiplied by 0.7, 1.0, 1.3
   \item LogP penalty multiplied by 0.7, 1.0, 1.3
 \end{itemize}
 
@@ -340,6 +343,7 @@ For the top 5 evolved candidates and baselines, three-dimensional conformer ense
 \textbf{Radius of Gyration}: Defined as:
 \begin{equation}
 R_g = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (\mathbf{r}_i - \mathbf{r}_{\text{cm}})^2}
+\label{eq:rog}
 \end{equation}
 where $\mathbf{r}_i$ is the position of atom $i$ and $\mathbf{r}_{\text{cm}}$ is the center of mass. RoG is a proxy for molecular size and flexibility; smaller RoG indicates a more compact, diffusion-favorable conformation.
 
@@ -397,7 +401,7 @@ NSGA-II identified a 9-member non-dominated frontier (Figure~\ref{fig:pareto}).
 \small
 \begin{tabular}{lcccccc}
 \toprule
-\textbf{Sequence} & \textbf{Pen.} & \textbf{Func.} & \textbf{MW (Da)} & \textbf{TPSA ($\text{\AA}^2$)} & \textbf{Edit Dist.} & \textbf{Role} \\
+\textbf{Sequence} & \textbf{Pen.} & \textbf{Func.} & \textbf{$M_w$ (Da)} & \textbf{TPSA ($\text{\AA}^2$)} & \textbf{Edit Dist.} & \textbf{Role} \\
 \midrule
 PTTPS & 0.687 & 0.667 & 501.5 & 217.6 & 2 & High-pen trade-off \\
 KTTPP & 0.678 & 0.670 & 542.6 & 228.6 & 2 & High-pen variant \\
@@ -427,7 +431,7 @@ This structure clearly visualizes the permeability-function trade-off and sugges
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/01_pareto_frontier.png}
-\caption{Pareto frontier from NSGA-II multi-objective optimization. Scatter plot shows penetration score (x-axis) vs functional preservation score (y-axis). All evaluated candidates shown in gray; Pareto frontier members highlighted and colored by edit distance. Key candidates (PTTPS, KTTKS, KTTPS, KTTPP) are annotated.}
+\caption{Pareto frontier from NSGA-II multi-objective optimization. Each point is a candidate peptide; the colored frontier members are non-dominated, meaning no other candidate is simultaneously better on all three objectives (penetration, functional preservation, synthesis feasibility). Both axes range over $[0, 1]$. All evaluated candidates are shown in gray; frontier members are colored by edit distance from the KTTKS baseline (viridis palette: dark = ED~0, bright = ED~2). Key candidates (PTTPS, KTTKS, KTTPS, KTTPP) are annotated.}
 \label{fig:pareto}
 \end{figure}
 
@@ -458,7 +462,7 @@ S5P & 5 (Ser$\to$Pro) & 2 & 22.2\% & Restricts C-terminus \\
 K1P & 1 (Lys$\to$Pro) & 1 & 11.1\% & Rare; only in extreme PTTPS \\
 \bottomrule
 \end{tabular}
-\caption{Mutation enrichment on Pareto frontier (9 candidates analyzed).}
+\caption{Mutation enrichment on the Pareto frontier (e.g., K4P denotes a Lys$\to$Pro substitution at position 4). Counts and frequencies are computed across the 9-member frontier.}
 \label{tab:mutations}
 \end{table}
 
@@ -474,7 +478,7 @@ These position-by-mutation patterns are visualized in Figure~\ref{fig:mutations}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/03_mutations.png}
-\caption{Mutation enrichment heatmap. Position (rows 1-5) versus amino acid mutation (columns) showing frequency of mutations appearing on the Pareto frontier. K4P (lysine to proline at position 4) is the dominant mutation, appearing in 55.6\% of frontier candidates. Position 5 mutations are more variable (Ser$\to$Ala, Ser$\to$Gly, Ser$\to$Pro each at 22.2\%).}
+\caption{Mutation enrichment heatmap. Position (rows 1--5) versus amino-acid substitution (columns), showing the fraction of the 9-member Pareto frontier carrying each mutation (frequency = count / 9). K4P (Lys$\to$Pro at position 4) is the dominant mutation, present in 55.6\% of frontier candidates. Position 5 substitutions are more variable, with Ser$\to$Ala, Ser$\to$Gly, and Ser$\to$Pro each at 22.2\%.}
 \label{fig:mutations}
 \end{figure}
 
@@ -496,14 +500,14 @@ KTTKS & Baseline & 5.47 & — & 4th \\
 Pal-KTTKS & Lipidated & 8.56 & +56.3\% & 5th (least compact) \\
 \bottomrule
 \end{tabular}
-\caption{Radius of gyration (RoG) from RDKit conformer ensembles. Lower RoG indicates more compact structure.}
+\caption{Radius of gyration (RoG), a one-number summary of molecular extent computed from 8-conformer RDKit ETKDG ensembles (Eq.~\ref{eq:rog}). Lower RoG indicates a more compact, diffusion-favorable conformation.}
 \label{tab:rog}
 \end{table}
 
 \textbf{Key findings}:
 \begin{enumerate}
   \item \textbf{PTTPS is most compact}: Mean RoG of 4.83 $\text{\AA}$ is 12.0\% smaller than KTTKS baseline (5.47 $\text{\AA}$), consistent with the hypothesis that K4P substitution (replacing large, hydrophobic-poor lysine with compact proline) reduces conformational size.
-  \item \textbf{Pal-KTTKS remains spatially extended}: Despite improved LogP (+0.99 vs KTTKS), the palmitoyl tail extends the conformational ensemble to 8.56 $\text{\AA}$ mean RoG (56.3\% larger). This explains why palmitoylation does not yield proportional penetration gains: the MW and spatial size penalties outweigh the LogP improvement.
+  \item \textbf{Pal-KTTKS remains spatially extended}: Despite improved LogP (+0.99 vs KTTKS), the palmitoyl tail extends the conformational ensemble to 8.56 $\text{\AA}$ mean RoG (56.3\% larger). This explains why palmitoylation does not yield proportional penetration gains: the $M_w$ and spatial size penalties outweigh the LogP improvement.
   \item \textbf{Compactness correlates with penetration}: The rank ordering of RoG (PTTPS $<$ KTTPS $<$ KTTPP $<$ KTTKS $<$ Pal-KTTKS) mirrors the penetration rank (0.687 $>$ 0.546 $>$ 0.678 $>$ 0.395 $>$ 0.508), supporting the hypothesis that conformational compactness favors diffusion.
 \end{enumerate}
 
@@ -542,7 +546,7 @@ Figure~\ref{fig:searchspace} situates the Pareto frontier within the full 3,706-
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{figures/04_search_space.png}
-\caption{Search space visualization showing all evaluated candidates (points colored by edit distance) and Pareto frontier members (starred, colored by edit distance). Baseline KTTKS shown as gold diamond. Search space is driven by penetration score (x-axis) vs molecular weight (y-axis). Frontier dominates the high-penetration, low-MW region of the search space.}
+\caption{Search space visualization. Each point is one of the 3,706 candidates in the ED $\leq 2$ neighborhood of KTTKS, plotted as penetration score ($x$-axis) against molecular weight ($y$-axis) and colored by edit distance from the baseline (viridis palette: dark = ED~0, bright = ED~2). Pareto frontier members are starred; baseline KTTKS is shown as a gold diamond. The frontier dominates the high-penetration, low-$M_w$ region of the search space.}
 \label{fig:searchspace}
 \end{figure}
 
@@ -555,7 +559,7 @@ Figure~\ref{fig:searchspace} situates the Pareto frontier within the full 3,706-
 
 \subsection{Phase 6: Sensitivity Analysis (Parameter Robustness)}
 
-±30\% variations in TPSA, MW, and LogP penalties were applied to the Phase 2 frontier. Results:
+$\pm 30\%$ variations in TPSA, $M_w$, and LogP penalties were applied to the Phase 2 frontier. Results:
 
 \begin{table}[H]
 \centering
@@ -567,8 +571,8 @@ Figure~\ref{fig:searchspace} situates the Pareto frontier within the full 3,706-
 Baseline (no variation) & — & — \\
 TPSA -30\% & 0.2 & 1 \\
 TPSA +30\% & 0.1 & 0 \\
-MW -30\% & 0.3 & 1 \\
-MW +30\% & 0.2 & 1 \\
+$M_w$ $-30\%$ & 0.3 & 1 \\
+$M_w$ $+30\%$ & 0.2 & 1 \\
 LogP -30\% & 0.4 & 2 \\
 LogP +30\% & 0.3 & 1 \\
 \toprule
@@ -648,7 +652,7 @@ Recent PLM-based peptide design studies\cite{esm2023, madani2023} focus on natur
 
 \subsubsection{Transdermal Delivery Literature}
 
-Our descriptor thresholds (MW $< 500$, TPSA $< 140$) derive from Potts \& Guy (1992)\cite{potts1992} and Mitragotri et al.\ (2004)\cite{prausnitz2004}, which synthesized transdermal permeability data from hundreds of small molecules. Applying these thresholds to peptides is a deliberate extrapolation, justified by the observation that peptides generally follow similar rules but with higher variance\cite{mitragotri2014}. By using soft penalties rather than hard cutoffs, we acknowledge this uncertainty while still guiding optimization toward delivery-favorable ranges.
+Our descriptor thresholds ($M_w < 500$, TPSA $< 140$) derive from Potts \& Guy (1992)\cite{potts1992} and Prausnitz, Mitragotri \& Langer (2004)\cite{prausnitz2004}, which synthesized transdermal permeability data from hundreds of small molecules. Applying these thresholds to peptides is a deliberate extrapolation, justified by the observation that peptides generally follow similar rules but with higher variance\cite{mitragotri2014}. By using soft penalties rather than hard cutoffs, we acknowledge this uncertainty while still guiding optimization toward delivery-favorable ranges.
 
 \subsubsection{Evolutionary Peptide Design}
 
@@ -674,7 +678,7 @@ RDKit conformer ensembles provide useful proxies for molecular size and flexibil
 
 \subsubsection{No Skin-Specific Binding or Metabolism}
 
-The penetration score penalizes TPSA and MW globally; it does not model stratum corneum-specific protein binding, enzymatic degradation, or pH-dependent charge states in different skin compartments. These factors could significantly modulate actual permeability and are left to experimental determination.
+The penetration score penalizes TPSA and $M_w$ globally; it does not model stratum corneum-specific protein binding, enzymatic degradation, or pH-dependent charge states in different skin compartments. These factors could significantly modulate actual permeability and are left to experimental determination.
 
 \subsubsection{Edit Distance 2 is Conservative}
 
@@ -768,6 +772,7 @@ For position-by-position functional-preservation scoring, we normalized BLOSUM62
 
 \begin{equation}
 f_{\text{BLOSUM}}[i] = \max(0, \min(1, 0.5 + 0.125 \cdot \text{BLOSUM62}[{\rm ref}[i], {\rm cand}[i]]))
+\label{eq:blosum_norm}
 \end{equation}
 
 This maps BLOSUM62 scores in the range $[-4, +4]$ to $[0.5, 1]$, ensuring even mismatch-penalizing (negative BLOSUM62) substitutions receive some credit if they are less bad than random.
@@ -785,6 +790,7 @@ The 3,706-candidate fixed-length ED$\leq 2$ neighborhood was generated via dynam
 \text{ED}(\text{seq1}[1:], \text{seq2}[1:]) & \text{(substitute)}
 \end{cases}
 \end{cases}
+\label{eq:edit_distance}
 \end{equation}
 
 For fixed-length sequences of length 5, insertions and deletions are not applicable, so ED reduces to the number of substitutions required (Hamming distance for equal-length strings). The enumeration algorithm:

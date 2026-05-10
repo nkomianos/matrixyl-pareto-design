@@ -37,7 +37,7 @@ def fig_pareto_frontier():
 
     # Pareto frontier in foreground
     scatter = ax.scatter(df['penetration_objective'], df['functional_objective'],
-                        s=150, c=df['edit_distance'], cmap='RdYlGn_r',
+                        s=150, c=df['edit_distance'], cmap='viridis',
                         edgecolors='black', linewidth=1.5, alpha=0.8,
                         label='Pareto frontier')
 

@@ -45,9 +45,9 @@
   \textsuperscript{2}[Affiliation], [City, Country]\\[0.4em]
   \textsuperscript{$\dagger$}These authors contributed equally to this work.\\
   \textsuperscript{*}Correspondence: \href{mailto:n.komianos@gmail.com}{n.komianos@gmail.com}\\[0.3em]
-  ORCID --- N.~Komianos: \href{https://orcid.org/0009-0005-0717-8340}{0009-0005-0717-8340};
-  P.~Prakash: \href{https://orcid.org/0009-0001-6716-4478}{0009-0001-6716-4478}\\
-  Email --- P.~Prakash: \href{mailto:pranup48@gmail.com}{pranup48@gmail.com}
+  ORCID: N.~Komianos \href{https://orcid.org/0009-0005-0717-8340}{0009-0005-0717-8340};
+  P.~Prakash \href{https://orcid.org/0009-0001-6716-4478}{0009-0001-6716-4478}.\\
+  Email: P.~Prakash \href{mailto:pranup48@gmail.com}{pranup48@gmail.com}
 }
 
 \date{\today}
@@ -58,7 +58,7 @@
 \linenumbers  % line numbers enabled for review
 
 \begin{abstract}
-Cosmetic peptides like Matrixyl (KTTKS) offer collagen-stimulating activity but face topical delivery barriers due to poor physicochemical properties (high molecular weight, polar character, multiple charged residues). We present a reproducible computational workflow combining evolutionary algorithms (tournament selection and NSGA-II) with exact molecular descriptor calculations (RDKit) to discover Matrixyl-family analogs with improved penetration-associated descriptors. Applied to the KTTKS core peptide in a fixed-length search space of 3,706 candidates (edit distance $\leq 2$), our approach identifies a 9-member Pareto frontier revealing fundamental trade-offs between permeability gain and motif preservation. The dominant design strategy---lysine to proline substitution at position 4 (K4P)---reduces topological polar surface area by 25.6\% while maintaining 67\% functional-preservation scores. Extended sensitivity analysis demonstrates robustness of core findings to $\pm 30\%$ penalty weight variations. Exhaustive space enumeration validates that evolutionary search recovered the true Pareto frontier with 100\% precision and recall. This computational framework demonstrates how evolutionary algorithms can systematically explore constrained peptide design spaces and generate actionable candidates for experimental validation, generalizing beyond cosmetic applications to therapeutic peptide optimization.
+Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is a collagen-stimulating peptide used in topical anti-ageing products, but its in-use efficacy is limited by poor permeation through the stratum corneum. We describe a deterministic computational workflow that combines a tournament genetic algorithm and NSGA-II with exact RDKit molecular descriptors to search the fixed-length, edit-distance-2 neighbourhood of KTTKS (3,706 candidate sequences) for analogs with descriptors more favourable for passive transdermal diffusion. The search returns a 9-member Pareto frontier that quantifies the trade-off between predicted permeability and motif preservation. Five of the nine frontier members carry the same substitution, lysine to proline at position 4 (K4P). This single change lowers the topological polar surface area by 25.6\%, removes the +1 charge contributed by lysine, and reduces the functional-preservation score from 1.00 (KTTKS) to 0.67. The frontier ranking is stable to $\pm 30\%$ perturbations of the descriptor penalty weights, and matches the ground-truth Pareto frontier obtained by exhaustive enumeration of all 3,706 candidates (precision and recall both 100\%). On the basis of these results we recommend three sequences for experimental validation: PTTPS (largest predicted gain), KTTPS (single-mutation, conservative), and KTTPP (backup). All code, results, and figures are released under MIT and CC BY 4.0.
 
 \smallskip
 \noindent
@@ -76,41 +76,31 @@ Cosmetic peptides like Matrixyl (KTTKS) offer collagen-stimulating activity but 
 
 \subsection{Motivation and Problem Statement}
 
-Peptide therapeutics and cosmetic ingredients represent a rapidly expanding class of bioactive compounds, with global markets approaching \$50 billion annually\cite{henninot2018}. Among cosmetic peptides, Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is one of the most commercially successful collagen-stimulating matrikines, with broad adoption in anti-aging formulations\cite{robinson2005}. Despite proven biological activity in cell culture and limited clinical studies, topical delivery remains a critical bottleneck limiting efficacy and market penetration\cite{mitragotri2014}.
+Peptides are a growing class of pharmaceutical and cosmetic actives. The peptide therapeutics market alone was valued at roughly \$40 billion in 2018 and has continued to grow\cite{henninot2018}. Within cosmetic peptides, Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is one of the longest-marketed actives in topical anti-ageing products and has shown collagen-stimulating activity in dermal fibroblast culture as well as measurable wrinkle improvement in a controlled clinical trial\cite{robinson2005}. The in-use efficacy of topical Matrixyl is nevertheless limited by poor permeation through the stratum corneum, which is the dominant constraint on biologically active peptides delivered through the skin\cite{mitragotri2014}.
 
-The barrier to topical peptide delivery is multifactorial: peptides typically possess molecular weights ($M_w$) in the range of 500--3,000 Da, topological polar surface areas (TPSA) of 100--250 $\text{\AA}^2$, and net charges of $\pm 2$ to $\pm 4$. These properties create a ``peptide delivery paradox'': molecules large enough to exhibit biological activity often violate small-molecule permeability rules established for transdermal absorption\cite{potts1992}. Lipidation (e.g., palmitoyl-KTTKS) improves LogP at the expense of further increasing molecular weight, providing only modest net benefit for topical delivery\cite{lintner2000}.
+The barriers to topical peptide delivery are not unique to Matrixyl. Bioactive peptides typically have molecular weights ($M_w$) in the 500--3,000 Da range, topological polar surface areas (TPSA) of 100--250 $\text{\AA}^2$, and net charges of $\pm 2$ to $\pm 4$, all of which violate the small-molecule transdermal rules established by Potts and Guy\cite{potts1992}. The standard industrial response is N-terminal lipidation, as in Pal-KTTKS, which improves LogP but increases molecular weight, with only modest net benefit for skin delivery\cite{lintner2000}.
 
-Traditional peptide optimization workflows prioritize biological activity and synthetic accessibility, treating permeability as a secondary concern addressed through formulation engineering (penetration enhancers, liposomes, etc.). Here, we invert this paradigm by placing topical delivery as a first-class optimization objective alongside functional preservation, asking: \textit{Can constrained evolutionary search discover Matrixyl-family analogs with improved penetration descriptors while maintaining recognizable motif character?}
+Most peptide optimization workflows treat permeability as a downstream problem to be solved through formulation, e.g.\ with penetration enhancers or liposomes. In this work we treat topical delivery as a first-class objective, alongside motif preservation, and ask whether constrained evolutionary search can discover Matrixyl analogs with descriptors more favourable for passive transdermal diffusion while still resembling the parent KTTKS sequence.
 
 \subsection{Computational Approaches to Peptide Design}
 
-Recent advances in protein language models (PLMs) have demonstrated remarkable success in predicting protein structure and function from sequence alone\cite{esm2023, alphafold2021}. These models offer promise for peptide design, capturing sequence naturalness and biological plausibility. However, PLMs are trained primarily on full-length proteins and may not reliably capture the specific functional constraints of short bioactive peptides\cite{madani2023}. Additionally, PLMs provide no direct optimization for physicochemical properties like TPSA or LogP that drive topical delivery.
+Protein language models (PLMs) such as ESM-2\cite{esm2023} and structure prediction models such as AlphaFold\cite{alphafold2021} have substantially advanced protein design from sequence. PLMs capture sequence naturalness and have been used to generate functional protein sequences across diverse families\cite{madani2023}, and diffusion-based generative models have been applied to backbone-level de novo protein design\cite{watson2023}. These approaches are well suited to long protein sequences, but they have two limitations for the present problem. First, they are trained predominantly on full-length proteins and may not capture the functional constraints of short cosmetic peptides. Second, they do not directly optimize for physicochemical descriptors such as TPSA or LogP, which determine passive transdermal diffusion.
 
-Evolutionary algorithms, by contrast, excel at navigating discrete combinatorial spaces under multiple competing objectives. NSGA-II\cite{nsga2} is the de facto standard multi-objective evolutionary algorithm and is widely used in cheminformatics. It complements recent generative and surrogate-model approaches in ligand design\cite{francoeur2020}, de novo protein design\cite{watson2023}, and protein language modelling\cite{madani2023}, which typically rely on learned scoring functions rather than the transparent, exact molecular descriptors used here. The primary advantage of an evolutionary multi-objective approach is transparency: every objective function is explicit, every constraint is interpretable, and the Pareto frontier directly visualizes trade-offs.
+Multi-objective evolutionary algorithms (MOEAs) take a complementary approach. NSGA-II\cite{nsga2} is the de facto standard MOEA and is widely used in cheminformatics; deep-learning approaches like the cross-docked CNN models of Francoeur et al.\cite{francoeur2020} typically supply scoring functions, but the optimization over a combinatorial sequence space is still well-suited to evolutionary search. An evolutionary approach also has the practical advantages that every objective function is written down explicitly, every constraint is interpretable, and the Pareto frontier shows the trade-off between objectives directly without a learned scalar utility.
 
-For the Matrixyl case, an evolutionary approach offers three specific advantages:
-\begin{enumerate}
-  \item \textbf{Explicit control over objectives}: We can quantify both penetration (TPSA, $M_w$, LogP) and function (motif preservation, edit distance) simultaneously.
-  \item \textbf{Exhaustive validation}: The small search space (3,706 candidates for ED $\leq 2$) permits enumeration of the entire neighborhood, enabling ground-truth validation of algorithm performance.
-  \item \textbf{Interpretability}: Every mutation can be mechanistically explained in terms of descriptor changes, facilitating hypothesis generation for experiments.
-\end{enumerate}
+For the Matrixyl problem the small search space (3,706 candidates within edit distance 2 of KTTKS) makes evolutionary search particularly attractive. The whole neighbourhood can be enumerated, so we can validate the evolved Pareto frontier against the ground-truth Pareto frontier rather than against a benchmark. Each mutation on the frontier can also be interpreted directly in terms of changes to the underlying descriptors (charge, hydrogen-bond count, polar surface area), which makes the resulting candidates easier to triage for experimental validation.
 
 \subsection{Research Questions and Hypotheses}
 
-This work addresses three concrete research questions:
+We address three questions:
 
 \begin{enumerate}
-  \item \textbf{RQ1}: Can constrained evolutionary search discover Matrixyl-family analogs with improved topical-delivery descriptors that meaningfully outperform the baseline?
-  \item \textbf{RQ2}: What design mutations most reliably improve permeability-related metrics, and are these improvements mechanistically interpretable?
-  \item \textbf{RQ3}: Can we quantify the fundamental trade-off between penetration gain and functional preservation, and does this trade-off remain robust across parameter variations?
+  \item Can a constrained evolutionary search find Matrixyl-family analogs with descriptors more favourable for passive transdermal diffusion than the parent KTTKS?
+  \item Which substitutions, if any, recur on the Pareto frontier, and can they be interpreted in terms of the underlying descriptors?
+  \item Is the trade-off between predicted permeability and motif preservation stable to perturbations in the penalty weights of the scoring function?
 \end{enumerate}
 
-We hypothesize that:
-\begin{description}
-  \item[H1] Multi-objective evolutionary algorithms will identify a Pareto frontier of $5$--$15$ candidates that meaningfully trade off penetration improvements (20\%--75\% gain) against loss of functional preservation (0\%--40\% drop).
-  \item[H2] Position-specific mutations (particularly at position 4, lysine) will emerge as dominant design drivers, appearing in $>40\%$ of frontier candidates.
-  \item[H3] The Pareto frontier will be robust to $\pm 30\%$ variations in descriptor penalty weights, indicating that core design principles are parameter-insensitive.
-\end{description}
+Our prior expectations, set before the search was run, were that NSGA-II would return a Pareto frontier of roughly 5--15 candidates with a clear trade-off between predicted permeability and motif preservation, that mutations at the two lysine positions would dominate the frontier, and that the frontier ranking would be insensitive to $\pm 30\%$ changes in the penalty weights.
 
 % ===========================
 % METHODS
@@ -390,7 +380,7 @@ Tournament selection with scalar fitness function $f = \text{penetration} \times
   \item Formal charge: 0 (vs KTTKS +2)
 \end{itemize}
 
-\textbf{Convergence behavior}: The best candidate was found by generation 4 and remained optimal through all subsequent generations, consistent with typical GA convergence on small landscapes. The population mean fitness plateaued by generation 30, indicating premature convergence---expected on a search space of only 3,706 sequences.
+\textbf{Convergence behaviour}: The best candidate was found by generation 4 and remained optimal through all subsequent generations. Population mean fitness plateaued by generation 30. Early convergence of this kind is unsurprising on a 3,706-candidate search space: the optimizer quickly exhausts promising neighbours of the best individual and population diversity collapses.
 
 \subsection{Phase 2: Pareto Frontier (Multi-Objective)}
 
@@ -468,7 +458,7 @@ K1P & 1 (Lys$\to$Pro) & 1 & 11.1\% & Rare; only in extreme PTTPS \\
 
 \textbf{Interpretation}:
 \begin{itemize}
-  \item \textbf{K4P dominance}: The K4P mutation is present in 5 of 9 frontier candidates (55.6\%), far exceeding random frequency. Mechanistically, replacement of lysine (polar, positively charged) with proline (hydrophobic, conformationally rigid) simultaneously reduces both TPSA and formal charge while increasing hydrophobic character---three desirable effects for transdermal permeability.
+  \item \textbf{K4P dominance}: The K4P mutation is present in 5 of 9 frontier candidates (55.6\%), far above the rate expected if mutations were drawn uniformly at random. Replacing lysine (polar, positively charged) with proline (hydrophobic, conformationally rigid) reduces TPSA, removes the +1 charge, and increases hydrophobic character. Each of these changes individually moves the candidate toward the descriptor ranges associated with passive transdermal diffusion.
   \item \textbf{Position 5 variability}: Serine at position 5 is replaced with three different residues (Ala, Gly, Pro) with nearly equal frequency (22.2\% each). This suggests position 5 is less critical for permeability optimization and that multiple strategies (reducing H-bonds, adding flexibility, adding rigidity) are viable.
   \item \textbf{K1P rarity}: The N-terminal lysine K1P mutation is present only in PTTPS, the extreme high-penetration candidate. This suggests K1P provides additional benefit (charge reduction) but at higher cost to function recognition.
 \end{itemize}
@@ -507,7 +497,7 @@ Pal-KTTKS & Lipidated & 8.56 & +56.3\% & 5th (least compact) \\
 \textbf{Key findings}:
 \begin{enumerate}
   \item \textbf{PTTPS is most compact}: Mean RoG of 4.83 $\text{\AA}$ is 12.0\% smaller than KTTKS baseline (5.47 $\text{\AA}$), consistent with the hypothesis that K4P substitution (replacing large, hydrophobic-poor lysine with compact proline) reduces conformational size.
-  \item \textbf{Pal-KTTKS remains spatially extended}: Despite improved LogP (+0.99 vs KTTKS), the palmitoyl tail extends the conformational ensemble to 8.56 $\text{\AA}$ mean RoG (56.3\% larger). This explains why palmitoylation does not yield proportional penetration gains: the $M_w$ and spatial size penalties outweigh the LogP improvement.
+  \item \textbf{Pal-KTTKS remains spatially extended}: although palmitoylation improves LogP by +0.99 against KTTKS, the palmitoyl tail extends the conformational ensemble to 8.56 $\text{\AA}$ mean RoG (56.3\% larger than the unmodified peptide). The cost in molecular size therefore outweighs the LogP benefit, which is why palmitoylation produces only a modest net gain in the penetration descriptor.
   \item \textbf{Compactness correlates with penetration}: The rank ordering of RoG (PTTPS $<$ KTTPS $<$ KTTPP $<$ KTTKS $<$ Pal-KTTKS) mirrors the penetration rank (0.687 $>$ 0.546 $>$ 0.678 $>$ 0.395 $>$ 0.508), supporting the hypothesis that conformational compactness favors diffusion.
 \end{enumerate}
 
@@ -583,7 +573,7 @@ LogP +30\% & 0.3 & 1 \\
 \label{tab:sensitivity}
 \end{table}
 
-\textbf{Conclusion}: The Pareto frontier is robust to parameter variations. No candidate outside the original frontier enters the top 3 under any ±30\% variation, and mean rank change is very small (0.25 positions), indicating that core design principles (K4P substitution, position 5 flexibility) are parameter-insensitive and biologically meaningful.
+\textbf{Conclusion}: The Pareto frontier is stable under these perturbations. No candidate outside the original frontier enters the top three under any of the six $\pm 30\%$ variations, and the mean rank change averaged across the sweep is 0.25 positions. This stability suggests that K4P and the position-5 flexibility are features of the descriptor landscape, not artifacts of the particular weights we chose.
 
 \subsection{Exhaustive Enumeration Validation}
 
@@ -616,55 +606,35 @@ Extra evolved members & 0 & — \\
 
 \subsection{Interpretation of Results}
 
-\subsubsection{K4P as a Universal Design Driver}
+\subsubsection{K4P at position 4}
 
-The dominant emergence of the K4P mutation (55.6\% frontier frequency) is the most striking and mechanistically interpretable result. Lysine at position 4 is known to be conserved in matrikines and is widely believed to interact with collagen via electrostatic interactions\cite{katayama1993}. Our analysis shows that replacing this residue with proline yields substantial permeability gains:
+Five of nine frontier members carry the K4P substitution, far more than would be expected from uniform-random sampling. The position-4 lysine in KTTKS is conserved across matrikines and has been argued to participate in electrostatic interactions with collagen\cite{katayama1993}, so its replacement is not innocuous from the standpoint of biological activity. From the standpoint of the descriptor scores it is straightforward: lysine to proline removes one unit of positive charge, increases hydrophobicity (Kyte-Doolittle index +1.8 for proline versus $-$3.9 for lysine), and replaces a hydrogen-bond donor with a residue that has none. Each of these changes individually moves the candidate toward the Potts and Guy ranges for passive transdermal diffusion.
 
-\begin{itemize}
-  \item Formal charge reduction: K$^+$ ($+1$) $\to$ P ($0$), eliminating one unit of positive charge. At skin pH (5.5), the impact is even larger (unprotonated lysine pKa $\approx$ 10.5 but partially protonated; proline remains neutral). This charge elimination reduces electrostatic repulsion at the skin-solution interface.
-  \item Hydrophobic character increase: Proline is hydrophobic (Kyte-Doolittle index $+$1.8) compared to lysine ($-$3.9). This shift favors partition into lipid membranes.
-  \item Conformational constraint: Proline's cyclic backbone restricts dihedral angles, reducing conformational entropy. Paradoxically, this can improve transport across barriers by enforcing a pre-organized structure.
-\end{itemize}
-
-However, K4P is not without cost: lysine's positive charge likely contributes to fibroblast engagement and collagen-stimulating signaling. Our functional-preservation score drops from 1.0 (KTTKS) to 0.667 (PTTPS), reflecting this compromise. Yet the K4P mutation remains on the frontier, indicating the trade-off is genuinely Pareto-optimal: you cannot further improve penetration without losing more function.
+There is a corresponding cost on the functional side. The functional-preservation score for the leading K4P-bearing candidate, PTTPS, is 0.67 against a baseline of 1.00 for KTTKS. The fact that K4P-bearing candidates remain on the frontier even after this penalty, rather than being dominated by candidates that retain the lysine, is the meaning of "Pareto-optimal" in this context: any further improvement in the penetration descriptor requires losing more functional preservation than K4P already costs.
 
 \subsubsection{Position 5 Flexibility}
 
-Position 5 (serine in KTTKS) shows variable substitution patterns: Ala, Gly, and Pro each appear in 2 frontier candidates (22.2\% frequency). This heterogeneity suggests position 5 is more flexible than position 4---multiple strategies (reducing H-bonds via alanine, adding flexibility via glycine, restricting backbone via proline) yield similar permeability gains. This flexibility may reflect that position 5 is distal from the known functional epitope.
+Position 5 (serine in KTTKS) shows variable substitution patterns: Ala, Gly, and Pro each appear in 2 frontier candidates (22.2\% frequency each). This heterogeneity suggests that position 5 is less constrained than position 4. Reducing hydrogen-bond donors via alanine, adding backbone flexibility via glycine, and restricting backbone via proline all yield comparable permeability gains. This is consistent with position 5 being distal from the known functional epitope of KTTKS.
 
-\subsubsection{Quantifying the Penetration-Function Trade-off}
+\subsubsection{Three regions of the frontier}
 
-The 9-member frontier cleanly separates three strategic zones:
+The 9-member frontier breaks into three regions by trade-off character. PTTPS and KTTPP, both at edit distance 2, give the largest gain in the penetration descriptor (67\%--69\%) but retain only 67\% of the motif-preservation score. KTTPS and KTTKP, at edit distance 1, give a more modest gain (38\%--50\%) while preserving 83\%--84\% of the motif. KTTKS itself is the lower endpoint: 0\% gain but full motif preservation, included by definition.
 
-\begin{enumerate}
-  \item \textbf{Aggressive optimization} (PTTPS, KTTPP): 67\%--69\% penetration gain, only 67\% function retention. Appropriate for hypothesis-driven experiments asking ``Is penetration enough to overcome loss of function?''
-  \item \textbf{Conservative optimization} (KTTPS, KTTKP): 38\%--50\% penetration gain, 83\%--84\% function retention. Lower risk; likely to show both improved delivery \textit{and} retained activity.
-  \item \textbf{Function anchor} (KTTKS): 0\% penetration gain, 100\% function. Baseline control.
-\end{enumerate}
-
-This structure enables a staged experimental strategy: start with KTTPS for high probability of success, escalate to PTTPS if KTTPS shows modest improvement, and include KTTKS to confirm baseline activity.
+A three-arm experimental design follows directly. KTTPS, the single-mutation candidate, has the highest prior probability of retaining biological activity and is the natural primary candidate. PTTPS is the aggressive arm: it tests whether the descriptor gain at the limit translates into measurable permeation, accepting a larger functional cost. KTTKS serves as the unmodified positive control.
 
 \subsection{Comparison to Prior Work}
 
 \subsubsection{Protein Language Models}
 
-Recent PLM-based peptide design studies\cite{esm2023, madani2023} focus on naturalness and broad biological plausibility. Our approach complements PLMs by adding explicit optimization for specific delivery descriptors. While PLMs excel at capturing sequence-to-function relationships learned from evolutionary data, they are less suited to optimizing for non-evolutionary objectives (e.g., LogP $\approx$ 2) that come from chemical principles of diffusion rather than biology. A hybrid approach---using PLM embeddings to score naturalness and RDKit to optimize delivery---would be a natural next step.
+PLM-based peptide and protein design\cite{esm2023, madani2023} optimizes for sequence naturalness, that is, sequences that look plausible to a model trained on the protein universe. The objective in this paper is different: we optimize for non-evolutionary, chemistry-derived descriptors of passive diffusion (LogP near 2, TPSA below 140 $\text{\AA}^2$, $M_w$ below 500 Da) that have no direct counterpart in the training distribution of a PLM. The two objectives can be combined. PLM embeddings could enter the multi-objective fitness as an additional naturalness term alongside the RDKit descriptors used here, with the Pareto frontier then quantifying the trade-off between naturalness and predicted delivery.
 
 \subsubsection{Transdermal Delivery Literature}
 
 Our descriptor thresholds ($M_w < 500$, TPSA $< 140$) derive from Potts \& Guy (1992)\cite{potts1992} and Prausnitz, Mitragotri \& Langer (2004)\cite{prausnitz2004}, which synthesized transdermal permeability data from hundreds of small molecules. Applying these thresholds to peptides is a deliberate extrapolation, justified by the observation that peptides generally follow similar rules but with higher variance\cite{mitragotri2014}. By using soft penalties rather than hard cutoffs, we acknowledge this uncertainty while still guiding optimization toward delivery-favorable ranges.
 
-\subsubsection{Evolutionary Peptide Design}
+\subsubsection{Computational peptide design}
 
-Computational peptide design has historically combined evolutionary or generative search with machine-learning surrogates trained on limited experimental data. Our approach uniquely emphasizes:
-\begin{itemize}
-  \item Exact molecular descriptors (RDKit) rather than learned proxies
-  \item Multi-objective optimization (transparent Pareto frontiers) rather than scalarized fitness
-  \item Exhaustive validation (ground-truth comparison) rather than approximate benchmarks
-  \item Interpretability (every mutation mechanistically explained) over raw prediction accuracy
-\end{itemize}
-
-This methodological emphasis makes the results more suitable for rational candidate selection and hypothesis generation.
+Computational peptide design has typically combined evolutionary or generative search with learned scoring functions trained on a limited amount of experimental data. The work presented here makes a different set of choices. The scoring is done with exact RDKit molecular descriptors rather than learned proxies. The optimization is multi-objective (a Pareto frontier) rather than a single scalarized fitness, so the trade-off between objectives is visible directly. The frontier is checked against the ground-truth Pareto set obtained by exhaustive enumeration of the search space, rather than against an approximate benchmark. Each candidate on the frontier can be explained in terms of changes to specific descriptors, so the output of the search is a small set of testable hypotheses about how individual substitutions move the candidate through descriptor space.
 
 \subsection{Limitations and Future Work}
 
@@ -695,11 +665,9 @@ Restricting to ED $\leq 2$ maintains motif proximity but may exclude superior ca
 
 \section{Conclusions}
 
-We have demonstrated that constrained evolutionary algorithms can systematically explore small-peptide design spaces and produce interpretable, actionable candidate prioritization for experimental validation. Applied to the Matrixyl core peptide KTTKS, the approach identified a 9-member Pareto frontier revealing fundamental trade-offs between topical-delivery descriptors and motif preservation.
+We applied a deterministic computational workflow (tournament GA, NSGA-II, RDKit descriptors, conformer-ensemble validation, and a sensitivity sweep over penalty weights) to the Matrixyl core peptide KTTKS and obtained a 9-member Pareto frontier in the trade-off between predicted skin permeability and motif preservation. The frontier is identical to the ground-truth Pareto set obtained by exhaustive enumeration of the 3,706-candidate search space.
 
-The dominant design strategy---lysine-to-proline substitution at position 4---emerges as a robust, mechanistically interpretable driver of permeability improvement across multiple parameter variations. Conservative candidates like KTTPS achieve 38\% penetration gain while retaining 83\% of the original motif character, offering a practical path to improved topical formulations without sacrificing predicted biological activity.
-
-The methodology is publication-ready, reproducible (all code and data on GitHub, 48 passing unit tests), and generalizable to other cosmetic and therapeutic peptides. Experimental validation of the three recommended candidates (PTTPS, KTTPS, KTTPP) will directly test whether computational prioritization translates to improved in vitro permeation and in vivo efficacy.
+The dominant substitution on the frontier is lysine-to-proline at position 4. It recurs across all $\pm 30\%$ perturbations of the descriptor weights and is interpretable directly in terms of charge, polarity, and hydrogen-bond count. We propose three candidates for experimental validation: KTTPS (single mutation, balanced trade-off) as the primary candidate, PTTPS (two mutations, larger predicted gain) as the aggressive arm, and KTTPP as a backup. All code, results, and figures are openly available, and 48 unit tests cover the descriptor calculations, the search-space rules, and the optimizer implementations.
 
 % ===========================
 % DECLARATIONS (bioRxiv-required statements)
@@ -708,7 +676,7 @@ The methodology is publication-ready, reproducible (all code and data on GitHub,
 \section*{Author Contributions}
 
 N.K.\ and P.P.\ contributed equally to this work. Per the \href{https://credit.niso.org/}{CRediT taxonomy}, both authors share the following roles:
-\textbf{Conceptualization}, \textbf{Methodology}, \textbf{Software}, \textbf{Validation}, \textbf{Formal analysis}, \textbf{Investigation}, \textbf{Data curation}, \textbf{Visualization}, \textbf{Writing --- original draft}, \textbf{Writing --- review \& editing}, and \textbf{Project administration}. Both authors read and approved the final manuscript.
+\textbf{Conceptualization}, \textbf{Methodology}, \textbf{Software}, \textbf{Validation}, \textbf{Formal analysis}, \textbf{Investigation}, \textbf{Data curation}, \textbf{Visualization}, \textbf{Writing -- original draft}, \textbf{Writing -- review \& editing}, and \textbf{Project administration}. Both authors read and approved the final manuscript.
 
 \section*{Competing Interests}
 
@@ -721,6 +689,10 @@ This work received no specific grant from any funding agency in the public, comm
 \section*{Ethics}
 
 This study did not involve human or animal subjects. All work is computational and relies exclusively on publicly available reference data (PubChem CID 9897237 for palmitoyl pentapeptide-4; canonical amino-acid sequence libraries).
+
+\section*{Use of Generative AI}
+
+In line with bioRxiv's policy on disclosure of artificial intelligence use, the authors note the following. The scientific design of the work, all algorithmic choices, all hyperparameters, all interpretations of the results, and all written claims in this manuscript are the responsibility of the human authors. Large language models (Anthropic Claude) were used in two capacities during the project. First, as an editorial assistant during drafting of the manuscript and the supporting documentation in the public repository. Second, as a code-completion tool during implementation of the pipeline; every routine was read, tested, and signed off by a human author, and the 48-test unit-test suite was written and reviewed by the human authors. No part of the manuscript was written or accepted without human review. No scientific claim, numerical result, or citation in this manuscript was generated solely by an AI system without human verification. No generative AI is listed as an author of this work, and no AI system holds responsibility for the content.
 
 \section*{Data and Code Availability}
 

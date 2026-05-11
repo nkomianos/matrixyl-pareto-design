@@ -38,7 +38,7 @@ The Pareto frontier, K4P design driver, sensitivity-analysis findings, and struc
 
 ### Code & Scripts
 - **experiments/06_sensitivity_analysis.py** — Parameter robustness analysis
-- **scripts/generate_figures.py** — Publication-ready figure generation
+- **scripts/generate_figures.py** — figure-generation script for the manuscript
 - **src/** — Core modules (all 48 unit tests passing)
   - `chemistry.py` — RDKit descriptor calculations
   - `constraints.py` — Penetration & function scoring
@@ -56,7 +56,7 @@ results/
 ├── phase3_analysis/            # Mutation enrichment analysis
 ├── phase4_structure/           # Conformer ensemble metrics
 ├── phase5_experimental/        # Synthesis panel + controls
-├── figures/                    # 5 publication-ready PNG figures
+├── figures/                    # 5 manuscript figures (300 dpi PNG)
 │   ├── 01_pareto_frontier.png
 │   ├── 02_convergence.png
 │   ├── 03_mutations.png

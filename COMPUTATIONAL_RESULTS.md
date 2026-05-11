@@ -1,4 +1,4 @@
-# Computational Optimization Results: Matrixyl Analogs for Enhanced Epidermal Permeability
+# Computational results: Matrixyl analogs for topical delivery
 
 > **Reference note.** This is an archival working document retained for development tracking. The published findings, with the figures and tables that accompany them, are in the manuscript at `manuscript/main.tex`. If a number disagrees between this file and the manuscript, the manuscript is authoritative.
 
@@ -65,10 +65,7 @@ Formal charge:        0
 | KTTKA | 0.434 | 0.854 | 1.0 | 547.7 | 272.2 | 1 |
 | **KTTKS** | 0.395 | **1.000** | 1.0 | 563.7 | 292.5 | 0 |
 
-**Trade-off structure**: The frontier separates three regions:
-- **High-penetration trade-offs** (`PTTPS`, `KTTPP`): 67-68% penetration, 67% function
-- **Balanced conservative** (`KTTPS`): 55% penetration, 83% function
-- **Function anchor** (`KTTKS`): 40% penetration, 100% function (no mutations)
+**Trade-off**: PTTPS and KTTPP at the high-penetration end (67--68% penetration descriptor, 67% functional preservation); KTTPS in between (55% / 83%); KTTKS at the function anchor (40% / 100%, by construction).
 
 ---
 
@@ -150,7 +147,7 @@ Formal charge:        0
 - PTTPS achieves a 74% higher penetration descriptor score than the KTTKS baseline.
 - KTTPS achieves a 38% gain in the penetration descriptor at a single-mutation cost in motif preservation.
 - Pal-KTTKS improves LogP but does not overcome the MW and TPSA penalties from the palmitoyl tail.
-- The frontier quantifies the trade-off between predicted permeability and motif preservation rather than removing it.
+- The frontier quantifies the trade-off between predicted permeability and motif preservation.
 
 ---
 

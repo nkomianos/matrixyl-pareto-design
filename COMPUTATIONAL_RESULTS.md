@@ -146,11 +146,11 @@ Formal charge:        0
 | **PTTPS** | **501.54** | **217.63** | -3.98 | **8** | **0.687** | 0.667 |
 | **KTTPS** | 532.60 | 257.64 | -4.27 | 9 | **0.546** | **0.833** |
 
-**Key Findings**:
-- PTTPS achieves **74% higher penetration score** than KTTKS baseline
-- KTTPS achieves **38% penetration gain** with minimal function loss
-- Pal-KTTKS shows that lipidation improves LogP but cannot overcome MW/TPSA penalties alone
-- The frontier reveals penetration-preservation trade-offs cannot be avoided, only managed
+**Key findings**:
+- PTTPS achieves a 74% higher penetration descriptor score than the KTTKS baseline.
+- KTTPS achieves a 38% gain in the penetration descriptor at a single-mutation cost in motif preservation.
+- Pal-KTTKS improves LogP but does not overcome the MW and TPSA penalties from the palmitoyl tail.
+- The frontier quantifies the trade-off between predicted permeability and motif preservation rather than removing it.
 
 ---
 

@@ -173,14 +173,7 @@ The deterministic phases of the pipeline (Phases 1--5 and the Phase 6 sensitivit
 
 ## Scientific limitations
 
-Include in Discussion:
-1. **Descriptor thresholds are soft** (MW < 500, TPSA < 140 are guidelines, not laws for peptides)
-2. **Functional-preservation score is sequence-based** (motif similarity only; no learned biological oracle)
-3. **Conformers are exploratory** (RDKit geometry ≠ real 3D dynamics)
-4. **No skin binding model** (ignores protein interactions, metabolism)
-5. **Purely computational** (biological activity unvalidated)
-
-This honesty strengthens the paper—you're making clear claims about what you did and didn't do.
+The full discussion of limitations lives in the manuscript (§Limitations and Future Work). The principal items are: descriptor thresholds (MW < 500, TPSA < 140) are soft penalties inherited from small-molecule transdermal literature; the functional-preservation score is a sequence-based proxy (motif similarity, BLOSUM62), not a learned biological oracle; conformer ensembles from RDKit ETKDG are exploratory and not substitutes for molecular dynamics; skin-specific protein binding, enzymatic degradation, and formulation effects are not modelled; all claims here are computational and require wet-lab validation.
 
 ---
 

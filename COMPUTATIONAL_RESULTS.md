@@ -53,17 +53,17 @@ Formal charge:        0
 
 **Pareto Frontier (9 Candidates)**:
 
-| Rank | Sequence | Penetration | Function | Synthesis | MW (Da) | TPSA (Ų) | Edit Dist |
-|------|----------|-------------|----------|-----------|---------|----------|-----------|
-| 1    | **PTTPS** | **0.687** | 0.667 | 1.0 | **501.5** | **217.6** | 2 |
-| 2    | **KTTPP** | 0.678 | 0.670 | 1.0 | 542.6 | 228.6 | 2 |
-| 3    | **KTTKS** | 0.395 | **1.000** | 1.0 | 563.7 | 292.5 | 0 |
-| 4    | **KTTPS** | 0.546 | **0.833** | 1.0 | 532.6 | 257.6 | 1 |
-| 5    | KTTPA | 0.635 | 0.687 | 1.0 | 516.6 | 237.4 | 2 |
-| 6    | KTTKA | 0.434 | 0.854 | 1.0 | 547.7 | 272.2 | 1 |
-| 7    | KTTKP | 0.504 | 0.836 | 1.0 | 573.7 | 263.4 | 1 |
-| 8    | KTTKG | 0.435 | 0.845 | 1.0 | 533.6 | 272.2 | 1 |
-| 9    | KTTPG | 0.635 | 0.678 | 1.0 | 502.6 | 237.4 | 2 |
+| Sequence | Penetration | Function | Synthesis | MW (Da) | TPSA (Ų) | Edit Dist |
+|----------|-------------|----------|-----------|---------|----------|-----------|
+| **PTTPS** | **0.687** | 0.667 | 1.0 | **501.5** | **217.6** | 2 |
+| **KTTPP** | 0.678 | 0.670 | 1.0 | 542.6 | 228.6 | 2 |
+| KTTPG | 0.635 | 0.678 | 1.0 | 502.6 | 237.4 | 2 |
+| KTTPA | 0.635 | 0.687 | 1.0 | 516.6 | 237.4 | 2 |
+| KTTKP | 0.504 | 0.836 | 1.0 | 573.7 | 263.4 | 1 |
+| **KTTPS** | 0.546 | **0.833** | 1.0 | 532.6 | 257.6 | 1 |
+| KTTKG | 0.435 | 0.845 | 1.0 | 533.6 | 272.2 | 1 |
+| KTTKA | 0.434 | 0.854 | 1.0 | 547.7 | 272.2 | 1 |
+| **KTTKS** | 0.395 | **1.000** | 1.0 | 563.7 | 292.5 | 0 |
 
 **Key Insight**: The frontier clearly separates three strategy zones:
 - **High-penetration trade-offs** (`PTTPS`, `KTTPP`): 67-68% penetration, 67% function
@@ -120,7 +120,7 @@ Formal charge:        0
 ### 2. KTTPS (Balanced Conservative)
 - **Rationale**: Single-mutation analog; strong motif preservation (83%)
 - **Strengths**: Minimal synthetic cost; robust compactness; likely active if tested
-- **Risk**: More modest permeability gain (27.5%) than PTTPS
+- **Risk**: More modest permeability gain (+38% vs KTTKS) than PTTPS (+74%)
 - **Use**: Conservative follow-up; likely to show both permeability AND functional activity
 
 ### 3. KTTPP (Backup High-Penetration)
@@ -213,14 +213,15 @@ Formal charge:        0
 
 ---
 
-## Paper Figures (Generated)
+## Manuscript figures
 
-1. ✅ **Pareto frontier plot** (penetration vs. functional preservation)
-2. ✅ **Convergence plots** (Phase 1 GA and Phase 2 NSGA-II)
-3. ✅ **Mutation heatmap** (position-frequency analysis)
-4. ✅ **Baseline comparison table** (KTTKS, Pal-KTTKS, top candidates)
-5. ✅ **Compactness vs. penetration** (structural validation scatter)
-6. ✅ **Candidate trade-off plot** (scalar score vs. descriptors)
+The five publication figures are at `manuscript/figures/` and are regenerated from the per-phase CSVs by `scripts/generate_figures.py`:
+
+1. **Pareto frontier** (penetration vs. functional preservation)
+2. **Convergence curves** (Tournament GA and NSGA-II)
+3. **Mutation enrichment heatmap** (position-frequency)
+4. **Search space visualization** (full 3,706-candidate space)
+5. **Edit-distance distribution** (frontier vs. full space)
 
 ---
 

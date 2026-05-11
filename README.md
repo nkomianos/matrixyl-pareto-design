@@ -163,15 +163,7 @@ No proprietary or restricted data are used.
 
 ## Citation
 
-If you use this repository, please cite the manuscript and the supporting code release. The Zenodo DOI for the release is [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787). Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
-
-Foundational references cited in the manuscript:
-
-- Deb, K. *et al.* (2002). NSGA-II: a fast and elitist multiobjective genetic algorithm. *IEEE Trans. Evol. Comput.* 6(3), 182–197.
-- Lin, Z. *et al.* (2023). Language models of protein sequences at the scale of evolution enable accurate structure prediction. *Science* 379, eade2574.
-- Potts, R. O. & Guy, R. H. (1992). Predicting skin permeability. *Adv. Drug Deliv. Rev.* 13, 1–30.
-- Mitragotri, S. *et al.* (2004). Transdermal drug delivery. *Nat. Biotechnol.* 22, 440–446.
-- Blanes-Mira, C. *et al.* (2002). Activity of palmitoyl pentapeptide on collagen synthesis (Matrixyl). *Int. J. Cosmet. Sci.* 24, 303–310.
+If you use this repository, please cite the manuscript and the supporting code release. The Zenodo DOI for the release is [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787). Machine-readable metadata is in [`CITATION.cff`](CITATION.cff); the full bibliography for the manuscript is at the end of [`manuscript/main.tex`](manuscript/main.tex).
 
 ---
 

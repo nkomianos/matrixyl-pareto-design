@@ -1,7 +1,7 @@
 # Project Status: Computational Peptide Design for Topical Delivery
 
-**Date**: 2026-05-08
-**Status**: PUBLICATION-READY (computational framework complete)
+**Date**: 2026-05-11
+**Status**: computational framework complete; preprint draft pending bioRxiv submission
 **Repository**: https://github.com/nkomianos/matrixyl-pareto-design (branch `main`)
 
 ---
@@ -12,15 +12,15 @@ A **reproducible computational optimization pipeline** for discovering cosmetic 
 
 ### Pipeline Phases (All Complete)
 
-| Phase | Component | Algorithm | Output | Status |
-|-------|-----------|-----------|--------|--------|
-| **1** | Single-objective optimization | Tournament GA | Best: PTTPS (0.4578) | ✅ |
-| **2** | Multi-objective optimization | NSGA-II | 9-member Pareto frontier | ✅ |
-| **3** | Mutation analysis | Enrichment statistics | K4P dominant (56%) | ✅ |
-| **4** | Structural validation | RDKit conformers | Compactness metrics | ✅ |
-| **5** | Experimental design | Panel selection | 3 candidates + controls | ✅ |
-| **6** | Sensitivity analysis | Parameter sweeps (±30 %) | Robustness validated | ✅ |
-| **ED3** | Extended search space | Pareto (edit distance 3) | 20 candidates, diminishing returns | ✅ |
+| Phase | Component | Algorithm | Output |
+|-------|-----------|-----------|--------|
+| **1** | Single-objective optimization | Tournament GA | Best: PTTPS (0.4578) |
+| **2** | Multi-objective optimization | NSGA-II | 9-member Pareto frontier |
+| **3** | Mutation analysis | Enrichment statistics | K4P dominant (56%) |
+| **4** | Structural validation | RDKit conformers | Compactness metrics |
+| **5** | Experimental design | Panel selection | 3 candidates + controls |
+| **6** | Sensitivity analysis | Parameter sweeps (±30 %) | Frontier stable under 5 of 6 perturbations |
+| **ED3** | Extended search space | Pareto (edit distance 3) | 20 candidates, diminishing returns |
 
 ---
 
@@ -80,7 +80,7 @@ results/
 | Candidate | Role | Penetration | Function | MW | Rationale |
 |-----------|------|-------------|----------|-----|-----------|
 | **PTTPS** | High-penetration | 0.687 | 0.667 | 501.5 | Test aggressive optimization |
-| **KTTPS** | Conservative | 0.546 | 0.833 | 532.6 | ⭐ **Recommended** (balanced) |
+| **KTTPS** | Conservative | 0.546 | 0.833 | 532.6 | **Primary candidate** (balanced) |
 | **KTTPP** | Backup | 0.678 | 0.670 | 542.6 | Alternative if PTTPS problematic |
 
 ### Controls
@@ -113,20 +113,9 @@ results/
 
 ---
 
-## Publication checklist
+## Pre-submission self-check
 
-- [x] **Reproducible algorithm** — Fixed seeds, deterministic GA/NSGA-II
-- [x] **Well-defined search space** — 3,706 exhaustively enumerable candidates
-- [x] **Validated results** — Pareto frontier verified via complete enumeration
-- [x] **Clear trade-offs** — Quantitative penetration vs. function analysis
-- [x] **Molecular insights** — K4P identified as dominant permeability driver
-- [x] **Design principles** — Mechanistic explanations grounded in chemistry
-- [x] **Structural evidence** — RoG correlates with descriptor improvements
-- [x] **Experimental proposal** — Synthesis panel + assay design specified
-- [x] **Sensitivity analysis** — Parameter robustness demonstrated (±30%)
-- [x] **Extended validation** — Edit distance 3 shows diminishing returns
-- [x] **Code availability** — All source on GitHub, 48 unit tests
-- [x] **Publication figures** — 5 high-res PNGs ready for journal submission
+The deterministic phases of the pipeline (Phases 1--5 and the Phase 6 sensitivity sweep) are complete and committed. The Pareto frontier has been validated against an exhaustive enumeration of the 3,706-candidate search space. The 48-test unit-test suite passes from a clean clone. Code, data, and results are licensed under MIT; the preprint is distributed under CC BY 4.0. The Zenodo snapshot for the release accompanying the preprint is at [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787).
 
 ---
 

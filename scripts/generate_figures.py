@@ -41,12 +41,21 @@ def fig_pareto_frontier():
                         edgecolors='black', linewidth=1.5, alpha=0.8,
                         label='Pareto frontier')
 
-    # Annotate key candidates
+    # Annotate key candidates with per-candidate label offsets to avoid overlap.
+    # PTTPS (0.687, 0.667) and KTTPP (0.678, 0.670) are very close in objective
+    # space, so their labels must be displaced in different directions.
+    label_offsets = {
+        'PTTPS':  (12,  -18),   # below-right
+        'KTTPP':  (-40, 14),    # above-left
+        'KTTPS':  (10,  10),    # above-right
+        'KTTKS':  (10,  -18),   # below-right
+    }
     for idx, row in df.iterrows():
-        if row['sequence'] in ['PTTPS', 'KTTKS', 'KTTPS', 'KTTPP']:
-            ax.annotate(row['sequence'],
+        seq = row['sequence']
+        if seq in label_offsets:
+            ax.annotate(seq,
                        xy=(row['penetration_objective'], row['functional_objective']),
-                       xytext=(5, 5), textcoords='offset points', fontsize=9,
+                       xytext=label_offsets[seq], textcoords='offset points', fontsize=9,
                        bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.3),
                        arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0'))
 

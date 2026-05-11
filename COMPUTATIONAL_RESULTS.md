@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-A constrained evolutionary optimization workflow was used to discover Matrixyl-family (`KTTKS`) peptide analogs with improved topical-delivery descriptors while preserving functional motifs. **Real computational results** show:
+A constrained evolutionary optimization workflow was used to discover Matrixyl-family (`KTTKS`) peptide analogs with improved topical-delivery descriptors while preserving functional motifs. Computational results:
 
 - **9-member Pareto frontier** separating permeability vs. motif-preservation trade-offs
 - **Top candidate**: `PTTPS` (+74% penetration descriptor vs KTTKS, 67% functional preservation)
@@ -65,7 +65,7 @@ Formal charge:        0
 | KTTKA | 0.434 | 0.854 | 1.0 | 547.7 | 272.2 | 1 |
 | **KTTKS** | 0.395 | **1.000** | 1.0 | 563.7 | 292.5 | 0 |
 
-**Key Insight**: The frontier clearly separates three strategy zones:
+**Trade-off structure**: The frontier separates three regions:
 - **High-penetration trade-offs** (`PTTPS`, `KTTPP`): 67-68% penetration, 67% function
 - **Balanced conservative** (`KTTPS`): 55% penetration, 83% function
 - **Function anchor** (`KTTKS`): 40% penetration, 100% function (no mutations)
@@ -97,11 +97,11 @@ Formal charge:        0
 
 | Sequence | Role | Mean RoG (Å) | vs KTTKS | Notes |
 |----------|------|-------------|---------|-------|
-| **PTTPS** | High-penetration | **5.05** | -6.9% | **Most compact** |
-| **KTTPS** | Balanced | **5.08** | -6.3% | More rigid backbone |
-| KTTPP | Backup | 5.25 | -3.3% | Moderate compactness |
-| KTTKS | Baseline | 5.42 | -- | Reference |
-| Pal-KTTKS | Lipidated | 8.38 | +54.5% | **Large spatial extent** |
+| PTTPS | High-penetration | 5.05 | -6.9% | most compact in the panel |
+| KTTPS | Balanced | 5.08 | -6.3% | more rigid backbone |
+| KTTPP | Backup | 5.25 | -3.3% | moderate compactness |
+| KTTKS | Baseline | 5.42 | -- | reference |
+| Pal-KTTKS | Lipidated | 8.38 | +54.5% | large spatial extent |
 
 **Interpretation**: K4P replacement (→ PTTPS) reduces conformational size, potentially improving diffusion. Pal-KTTKS remains spatially large despite improved LogP, confirming that lipidation creates a different permeability problem.
 

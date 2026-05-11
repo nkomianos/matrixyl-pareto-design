@@ -212,7 +212,7 @@ f_{\text{BLOSUM}} &= \frac{1}{5} \sum_{i=1}^{5} \text{BLOSUM62}_{\text{ref}[i], 
 
 The BLOSUM62 score is normalized by dividing the sum by 5 (sequence length) and then by the maximum possible BLOSUM62 value (4.0 for identical residues), yielding a score in $[0, 1]$.
 
-\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{katayama1993}. The weighted scheme of Eq.~\ref{eq:function_score} reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight). This scheme is transparent and easily modifiable if new functional data becomes available.
+\textbf{Rationale}: Position 4 lysine is known to be critical for collagen-stimulating activity in matrikines\cite{katayama1993}. The weighted scheme of Eq.~\ref{eq:function_score} reflects uncertainty: exact identity is valued (0.40 weight) but edit distance also matters (0.40 weight), and conservative substitutions should not be penalized as heavily as drastic mutations (0.20 weight).
 
 \subsubsection{Synthesis Feasibility Score}
 
@@ -333,7 +333,7 @@ R_g = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (\mathbf{r}_i - \mathbf{r}_{\text{cm}})^2
 \end{equation}
 where $\mathbf{r}_i$ is the position of atom $i$ and $\mathbf{r}_{\text{cm}}$ is the center of mass. RoG is a proxy for molecular size and flexibility; smaller RoG indicates a more compact, diffusion-favorable conformation.
 
-\textbf{Metrics reported}: Mean, standard deviation, minimum, maximum RoG across the 8-conformer ensemble.
+\textbf{Metrics reported}: Mean, standard deviation, minimum, and maximum RoG across each conformer ensemble (8 conformers per unmodified peptide; 3 for Pal-KTTKS, consistent with the ensemble sizes described above).
 
 \subsection{Software and Reproducibility}
 
@@ -352,7 +352,7 @@ Random seeds were fixed (seed=42) to ensure deterministic reproducibility. All u
 % ===========================
 \section{Results}
 
-\subsection{Phase 1: Tournament Search (Single-Objective)}
+\subsection{Tournament Search (Single-Objective)}
 
 Tournament selection with scalar fitness function $f = \text{penetration} \times \text{function}$ was run for 100 generations on a population of 100 individuals.
 
@@ -378,7 +378,7 @@ Tournament selection with scalar fitness function $f = \text{penetration} \times
 
 \textbf{Convergence behaviour}: The best candidate was found by generation 4 and remained optimal through all subsequent generations. Population mean fitness plateaued by generation 30. Early convergence of this kind is unsurprising on a 3,706-candidate search space: the optimizer quickly exhausts promising neighbours of the best individual and population diversity collapses.
 
-\subsection{Phase 2: Pareto Frontier (Multi-Objective)}
+\subsection{Pareto Frontier (Multi-Objective)}
 
 NSGA-II identified a 9-member non-dominated frontier (Figure~\ref{fig:pareto}).
 
@@ -411,7 +411,7 @@ KTTKS & 0.395 & 1.000 & 563.7 & 292.5 & 0 & Baseline \\
   \item \textbf{Function anchor} (baseline KTTKS): Perfect functional score (1.0) by definition but lowest penetration (0.395).
 \end{enumerate}
 
-This structure clearly visualizes the permeability-function trade-off and suggests distinct experimental strategies: aggressive optimization (PTTPS), balanced evaluation (KTTPS), or high-confidence function (KTTKS).
+PTTPS and KTTPS occupy the two ends of the practical trade-off; KTTKS sits at the function-anchor end by definition.
 
 % ===== FIGURES =====
 \begin{figure}[H]
@@ -430,7 +430,7 @@ Convergence behavior of both optimizers is summarized in Figure~\ref{fig:converg
 \label{fig:convergence}
 \end{figure}
 
-\subsection{Phase 3: Mutation Enrichment Analysis}
+\subsection{Mutation Enrichment Analysis}
 
 Across the 9-member frontier, only 5 unique mutations appear:
 
@@ -468,7 +468,7 @@ These position-by-mutation patterns are visualized in Figure~\ref{fig:mutations}
 \label{fig:mutations}
 \end{figure}
 
-\subsection{Phase 4: Structural Validation (Conformer Ensembles)}
+\subsection{Structural Validation (Conformer Ensembles)}
 
 RoG statistics for top candidates and baselines (8 conformers per sequence, MMFF94s/UFF optimization):
 
@@ -497,7 +497,7 @@ Pal-KTTKS & Lipidated & 8.38 & $+54.5\%$ & 5th (least compact) \\
   \item \textbf{Compactness is positively but imperfectly correlated with penetration}: the most compact candidate (PTTPS) also has the highest penetration score, and the high-penetration candidates cluster at the low-RoG end of the table. The ordering is not strictly monotonic, however: among the three high-penetration candidates the RoG ranking (PTTPS $<$ KTTPS $<$ KTTPP) differs from the penetration ranking (PTTPS $>$ KTTPP $>$ KTTPS), so RoG is one contributor to permeability rather than the sole driver.
 \end{enumerate}
 
-\subsection{Phase 5: Edit Distance 3 (Extended Search Space)}
+\subsection{Edit Distance 3 (Extended Search Space)}
 
 To test for diminishing returns, NSGA-II was re-run with max edit distance 3 (ED$\leq 3$, $\approx 100$k candidates):
 
@@ -543,7 +543,7 @@ Figure~\ref{fig:searchspace} situates the Pareto frontier within the full 3,706-
 \label{fig:editdist}
 \end{figure}
 
-\subsection{Phase 6: Sensitivity Analysis (Parameter Robustness)}
+\subsection{Sensitivity Analysis (Parameter Robustness)}
 
 $\pm 30\%$ variations in TPSA, $M_w$, and LogP penalties were applied to the Phase 2 frontier. Results:
 
@@ -592,7 +592,7 @@ Extra evolved members & 0 & -- \\
 \label{tab:validation}
 \end{table}
 
-\textbf{Interpretation}: This result is a strong validation that the evolutionary algorithm's design choices (population size, mutations, selection) are well-suited to the search landscape. For small, well-defined spaces, NSGA-II reliably finds the global Pareto frontier.
+\textbf{Interpretation}: NSGA-II with the parameters described in Section~2.4.2 recovered the full ground-truth Pareto set on this 3,706-candidate space. For spaces of this size and structure, the evolutionary search is sufficient; for larger spaces where exhaustive enumeration is infeasible, the same algorithm would have no such guarantee.
 
 % ===========================
 % DISCUSSION
@@ -613,9 +613,7 @@ Position 5 (serine in KTTKS) shows variable substitution patterns: Ala, Gly, and
 
 \subsubsection{Three regions of the frontier}
 
-The 9-member frontier breaks into three regions by trade-off character. PTTPS and KTTPP, both at edit distance 2, give the largest gain in the penetration descriptor (67\%--69\%) but retain only 67\% of the motif-preservation score. KTTPS and KTTKP, at edit distance 1, give a more modest gain (38\%--50\%) while preserving 83\%--84\% of the motif. KTTKS itself is the lower endpoint: 0\% gain but full motif preservation, included by definition.
-
-A three-arm experimental design follows directly. KTTPS, the single-mutation candidate, has the highest prior probability of retaining biological activity and is the natural primary candidate. PTTPS is the aggressive arm: it tests whether the descriptor gain at the limit translates into measurable permeation, accepting a larger functional cost. KTTKS serves as the unmodified positive control.
+For experimental triage, the natural primary candidate is KTTPS, the single-mutation analog: it has the highest prior probability of retaining biological activity (motif-preservation 0.833) while still gaining 38\% in the penetration descriptor against KTTKS. PTTPS is the appropriate aggressive arm for testing whether descriptor gains at the limit translate into measurable permeation, accepting a larger functional cost. KTTPP serves as a synthesis backup with a profile close to PTTPS but a slightly higher functional score. KTTKS is the unmodified control.
 
 \subsection{Comparison to Prior Work}
 
@@ -652,7 +650,7 @@ Restricting to ED $\leq 2$ maintains motif proximity but may exclude superior ca
 \subsubsection{Future Directions}
 
 \begin{enumerate}
-  \item \textbf{Hybrid PLM + chemical optimization}: Combine ESM-2 or ProtBERT naturalness scores with our RDKit delivery objectives in a unified MOEA.
+  \item \textbf{Hybrid PLM + chemical optimization}: combine PLM-derived naturalness scores (for example from ESM-2 or a ProGen-style decoder model) with the RDKit delivery descriptors used here in a single multi-objective fitness.
   \item \textbf{Active learning from experiments}: Run small batches of in vitro permeation and fibroblast assays, use results to refine functional-preservation scoring, re-optimize.
   \item \textbf{Formulation co-optimization}: Extend the framework to jointly optimize peptide sequence and formulation parameters (penetration enhancer concentration, vehicle composition).
   \item \textbf{Larger peptides}: Apply the same methodology to longer cosmetic or therapeutic peptides (10--20 residues), where exhaustive enumeration is infeasible but MOEA + sensitivity analysis remain tractable.
@@ -660,9 +658,7 @@ Restricting to ED $\leq 2$ maintains motif proximity but may exclude superior ca
 
 \section{Conclusions}
 
-We applied a deterministic computational workflow (tournament GA, NSGA-II, RDKit descriptors, conformer-ensemble validation, and a sensitivity sweep over penalty weights) to the Matrixyl core peptide KTTKS and obtained a 9-member Pareto frontier in the trade-off between predicted skin permeability and motif preservation. The frontier is identical to the ground-truth Pareto set obtained by exhaustive enumeration of the 3,706-candidate search space.
-
-The dominant substitution on the frontier is lysine-to-proline at position 4. It recurs across all $\pm 30\%$ perturbations of the descriptor weights and is interpretable directly in terms of charge, polarity, and hydrogen-bond count. We propose three candidates for experimental validation: KTTPS (single mutation, balanced trade-off) as the primary candidate, PTTPS (two mutations, larger predicted gain) as the aggressive arm, and KTTPP as a backup. All code, results, and figures are openly available, and 48 unit tests cover the descriptor calculations, the search-space rules, and the optimizer implementations.
+The Pareto frontier in the trade-off between predicted skin permeability and motif preservation for the Matrixyl core peptide KTTKS has nine members, and is identical to the ground-truth set recovered by exhaustive enumeration of the 3,706-candidate edit-distance-2 neighbourhood. Lysine-to-proline at position 4 (K4P) is the single substitution that dominates this frontier: it appears in five of nine frontier members, recurs across all $\pm 30\%$ perturbations to the TPSA and $M_w$ penalty weights, and can be read directly in terms of charge, polarity, and hydrogen-bond count. We propose KTTPS as the primary candidate for experimental validation (single mutation, motif-preservation 0.833, 38\% gain in the penetration descriptor), PTTPS as the aggressive arm (two mutations, 74\% gain at a functional cost), and KTTPP as a synthesis backup. All code, results, and figures are openly available; the 48-test unit-test suite covers the descriptor calculations, the search-space rules, and the optimizer implementations.
 
 % ===========================
 % DECLARATIONS (bioRxiv-required statements)

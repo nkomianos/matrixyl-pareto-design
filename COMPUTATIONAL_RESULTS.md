@@ -227,7 +227,7 @@ Formal charge:        0
 - **Random seeds**: Fixed (seed=42 for GA, seed=42 for conformers)
 - **Environment**: Python 3.10, RDKit 2023.09, NumPy 1.24.3
 - **Data checksums**: Available in run metadata files
-- **Code version**: https://github.com/nkomianos/Bio-paper (branch `main`)
+- **Code version**: https://github.com/nkomianos/matrixyl-pareto-design (branch `main`)
 
 ---
 

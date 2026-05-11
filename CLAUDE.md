@@ -1,4 +1,4 @@
-# CLAUDE.md — developer quickstart for the Bio-paper repository
+# CLAUDE.md — developer quickstart for the matrixyl-pareto-design repository
 
 This file is read by AI coding assistants (and humans) at the start of a session.
 It describes what this repository actually contains today; for narrative results

@@ -14,7 +14,9 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
-\usepackage{lineno}  % line numbers for review (bioRxiv recommended)
+% Line numbers (lineno) are intentionally not loaded for the bioRxiv
+% preprint build. They can be added back for the journal-submission
+% version by re-enabling \usepackage{lineno} and \linenumbers.
 \usepackage{orcidlink}  % \orcidlink{0000-0000-0000-0000} for ORCID badges
 
 % Define keywords command for abstract
@@ -41,8 +43,8 @@
   Nikolaos Komianos\textsuperscript{1,$\dagger$,*}\,\orcidlink{0009-0005-0717-8340},
   Pranadarth Prakash\textsuperscript{2,$\dagger$}\,\orcidlink{0009-0001-6716-4478}\\[0.6em]
   \small
-  \textsuperscript{1}[Affiliation], [City, Country]\\
-  \textsuperscript{2}[Affiliation], [City, Country]\\[0.4em]
+  \textsuperscript{1}Enloq, Inc.\\
+  \textsuperscript{2}Enloq, Inc.\\[0.4em]
   \textsuperscript{$\dagger$}These authors contributed equally to this work.\\
   \textsuperscript{*}Correspondence: \href{mailto:n.komianos@gmail.com}{n.komianos@gmail.com}\\[0.3em]
   ORCID: N.~Komianos \href{https://orcid.org/0009-0005-0717-8340}{0009-0005-0717-8340};
@@ -55,7 +57,6 @@
 \begin{document}
 
 \maketitle
-\linenumbers  % line numbers enabled for review
 
 \begin{abstract}
 Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is a collagen-stimulating peptide used in topical anti-ageing products, but its in-use efficacy is limited by poor permeation through the stratum corneum. We describe a deterministic computational workflow that combines a tournament genetic algorithm and NSGA-II with exact RDKit molecular descriptors to search the fixed-length, edit-distance-2 neighbourhood of KTTKS (3,706 candidate sequences) for analogs with descriptors more favourable for passive transdermal diffusion. The search returns a 9-member Pareto frontier that quantifies the trade-off between predicted permeability and motif preservation. Five of the nine frontier members carry the same substitution, lysine to proline at position 4 (K4P). This single change lowers the topological polar surface area by 25.6\%, removes the +1 charge contributed by lysine, and reduces the functional-preservation score from 1.00 (KTTKS) to 0.67. The frontier ranking is stable to $\pm 30\%$ perturbations of the descriptor penalty weights, and matches the ground-truth Pareto frontier obtained by exhaustive enumeration of all 3,706 candidates (precision and recall both 100\%). On the basis of these results we recommend three sequences for experimental validation: PTTPS (largest predicted gain), KTTPS (single-mutation, conservative), and KTTPP (backup). All code, results, and figures are released under MIT and CC BY 4.0.
@@ -349,7 +350,7 @@ All computations were performed using:
   \item Custom implementations of GA, NSGA-II, Pareto utilities (no external MOEA libraries)
 \end{itemize}
 
-Random seeds were fixed (seed=42) to ensure deterministic reproducibility. All unit tests (48 tests covering descriptor calculations, constraint validation, optimization algorithms, and analysis) passed with 100\% success rate. Complete code and results are available on GitHub: \url{https://github.com/nkomianos/Bio-paper}.
+Random seeds were fixed (seed=42) to ensure deterministic reproducibility. All unit tests (48 tests covering descriptor calculations, constraint validation, optimization algorithms, and analysis) passed with 100\% success rate. Complete code and results are available on GitHub: \url{https://github.com/nkomianos/matrixyl-pareto-design}.
 
 % ===========================
 % RESULTS
@@ -680,7 +681,7 @@ N.K.\ and P.P.\ contributed equally to this work. Per the \href{https://credit.n
 
 \section*{Competing Interests}
 
-N.K.\ and P.P.\ are co-founders of and hold equity in Tesera Labs (formerly Enloq Foundry, Enloq, Inc.), an AI-native peptide design company. The methodology described in this paper is unrelated to Tesera Labs' commercial pipeline.
+N.K.\ and P.P.\ are co-founders of and hold equity in Enloq, Inc., an AI Self-Discovery lab that operates Enloq Foundry, the company's peptide-design programme. The methodology described in this paper is unrelated to the foundry's commercial pipeline.
 
 \section*{Funding}
 
@@ -696,11 +697,7 @@ In line with bioRxiv's policy on disclosure of artificial intelligence use, the 
 
 \section*{Data and Code Availability}
 
-All source code, unit tests, per-phase result CSVs, and publication figures are openly available at \url{https://github.com/nkomianos/Bio-paper}. A persistent Zenodo DOI snapshot will be minted at preprint submission [DOI: TBD]. The repository is licensed under MIT (code, data, results); this preprint is distributed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). No proprietary or restricted data are used in this study.
-
-\section*{Acknowledgments}
-
-All computational experiments were run on commodity CPU hardware; no GPU acceleration or pre-trained model weights were required. We thank [collaborators] for helpful discussions on peptide chemistry and delivery mechanisms.
+All source code, unit tests, per-phase result CSVs, and publication figures are openly available at \url{https://github.com/nkomianos/matrixyl-pareto-design}. A persistent Zenodo DOI snapshot will be minted at preprint submission [DOI: TBD]. The repository is licensed under MIT (code, data, results); this preprint is distributed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). No proprietary or restricted data are used in this study.
 
 \begin{thebibliography}{99}
 
@@ -789,7 +786,7 @@ The discrepancy from the reported 3,706 arises from the fact that some combinati
 
 All source code, unit tests, results CSVs, and figures are available at:
 \begin{center}
-\url{https://github.com/nkomianos/Bio-paper}
+\url{https://github.com/nkomianos/matrixyl-pareto-design}
 \end{center}
 
 Unit test suite (48 tests):

@@ -2,7 +2,7 @@
 
 **Date**: 2026-05-08
 **Status**: PUBLICATION-READY (computational framework complete)
-**Repository**: https://github.com/nkomianos/Bio-paper (branch `main`)
+**Repository**: https://github.com/nkomianos/matrixyl-pareto-design (branch `main`)
 
 ---
 

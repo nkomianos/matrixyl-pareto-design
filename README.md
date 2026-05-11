@@ -24,7 +24,7 @@ For full details see [`COMPUTATIONAL_RESULTS.md`](COMPUTATIONAL_RESULTS.md), the
 ## Repository layout
 
 ```
-Bio-paper/
+matrixyl-pareto-design/
 ├── README.md                          ← you are here
 ├── LICENSE                            ← MIT (code, data, results)
 ├── CITATION.cff                       ← citation metadata

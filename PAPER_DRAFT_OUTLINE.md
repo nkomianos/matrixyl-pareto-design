@@ -291,7 +291,7 @@ Phase 1 tournament search ran with random mutant initialization (not seeded from
 
 ### D. Code and Data Availability
 
-- **Repository**: https://github.com/nkomianos/Bio-paper (branch `main`)
+- **Repository**: https://github.com/nkomianos/matrixyl-pareto-design (branch `main`)
 - **Tests**: 48 unit tests covering all modules; 100% pass rate
 - **Reproducibility**: Fixed random seeds (seed=42); all parameters logged to run_metadata.json
 - **Data**: All CSV files (evaluated_candidates, pareto_frontier, mutation_enrichment) included in supplementary materials

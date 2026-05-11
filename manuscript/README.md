@@ -36,4 +36,4 @@ The script writes directly into `manuscript/figures/`, so no manual copying is r
 
 ## Source of truth
 
-Code, unit tests, and full results: <https://github.com/nkomianos/Bio-paper> (branch `main`).
+Code, unit tests, and full results: <https://github.com/nkomianos/matrixyl-pareto-design> (branch `main`).

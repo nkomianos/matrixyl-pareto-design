@@ -11,6 +11,7 @@ type: software
 authors:
   - family-names: Komianos
     given-names: Nikolaos
+    email: n.komianos@gmail.com
   - family-names: Prakash
     given-names: Pranadarth
     email: pranup48@gmail.com
@@ -34,8 +35,9 @@ preferred-citation:
   authors:
     - family-names: Komianos
       given-names: Nikolaos
+      email: n.komianos@gmail.com
     - family-names: Prakash
       given-names: Pranadarth
       email: pranup48@gmail.com
   year: 2026
-  notes: "Preprint forthcoming on bioRxiv."
+  notes: "Preprint deposited on bioRxiv; DOI added here once assigned."

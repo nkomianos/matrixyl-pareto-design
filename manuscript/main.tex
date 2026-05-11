@@ -319,7 +319,7 @@ Edit distance 3 (ED$\leq 3$) was evaluated to test for diminishing returns:
 
 For the top 5 evolved candidates and baselines, three-dimensional conformer ensembles were generated:
 \begin{enumerate}
-  \item Use RDKit ETKDG (distance geometry with triangle bounds smoothing) to generate 8 diverse conformations per sequence.
+  \item Use RDKit ETKDG (distance geometry with triangle bounds smoothing) to generate 8 diverse conformations for each unmodified peptide; for the lipidated Pal-KTTKS, where the long palmitoyl tail dominates the conformational extent, 3 conformations were used because additional samples added redundant rather than informative geometries.
   \item Embed each conformation using distance-geometry distance bounds.
   \item Optimize each structure with MMFF94s force field; fall back to UFF if MMFF fails.
   \item Run 100 optimization cycles per conformer.
@@ -486,7 +486,7 @@ KTTKS & Baseline & 5.42 & -- & 4th \\
 Pal-KTTKS & Lipidated & 8.38 & $+54.5\%$ & 5th (least compact) \\
 \bottomrule
 \end{tabular}
-\caption{Radius of gyration (RoG), a one-number summary of molecular extent computed from 8-conformer RDKit ETKDG ensembles (Eq.~\ref{eq:rog}). Lower RoG indicates a more compact, diffusion-favorable conformation.}
+\caption{Radius of gyration (RoG), a one-number summary of molecular extent computed from RDKit ETKDG ensembles (Eq.~\ref{eq:rog}): 8 conformers per unmodified peptide; 3 for Pal-KTTKS, whose flexible palmitoyl tail dominates the conformational extent. Lower RoG indicates a more compact, diffusion-favorable conformation.}
 \label{tab:rog}
 \end{table}
 
@@ -621,7 +621,7 @@ A three-arm experimental design follows directly. KTTPS, the single-mutation can
 
 \subsubsection{Protein Language Models}
 
-PLM-based peptide and protein design\cite{esm2023, madani2023} optimizes for sequence naturalness, that is, sequences that look plausible to a model trained on the protein universe. The objective in this paper is different: we optimize for non-evolutionary, chemistry-derived descriptors of passive diffusion (LogP near 2, TPSA below 140 $\text{\AA}^2$, $M_w$ below 500 Da) that have no direct counterpart in the training distribution of a PLM. The two objectives can be combined. PLM embeddings could enter the multi-objective fitness as an additional naturalness term alongside the RDKit descriptors used here, with the Pareto frontier then quantifying the trade-off between naturalness and predicted delivery.
+PLM-based peptide and protein design\cite{madani2023} optimizes for sequence naturalness, that is, sequences that look plausible to a model trained on the protein universe. The objective in this paper is different: we optimize for non-evolutionary, chemistry-derived descriptors of passive diffusion (LogP near 2, TPSA below 140 $\text{\AA}^2$, $M_w$ below 500 Da) that have no direct counterpart in the training distribution of a PLM. The two objectives can be combined. PLM embeddings could enter the multi-objective fitness as an additional naturalness term alongside the RDKit descriptors used here, with the Pareto frontier then quantifying the trade-off between naturalness and predicted delivery.
 
 \subsubsection{Transdermal Delivery Literature}
 

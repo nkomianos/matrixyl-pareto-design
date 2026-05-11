@@ -158,18 +158,36 @@ def run_sensitivity_analysis(
     rank_stability_df.to_csv(rank_stability_csv, index=False)
 
     # Summary statistics
+    n_perturbations = len(rank_stability_df)
+    n_stable = int((rank_stability_df['max_rank_change'] == 0).sum())
+
+    if n_stable == n_perturbations:
+        conclusion = (
+            f"Frontier ranking is completely stable across all "
+            f"{n_perturbations} ±30% perturbations."
+        )
+    elif n_stable >= n_perturbations - 1:
+        conclusion = (
+            f"Frontier ranking is unchanged in {n_stable} of "
+            f"{n_perturbations} ±30% perturbations; one perturbation "
+            f"produces rank movement."
+        )
+    else:
+        n_moving = n_perturbations - n_stable
+        conclusion = (
+            f"Frontier ranking moves under {n_moving} of "
+            f"{n_perturbations} ±30% perturbations."
+        )
+
     summary = {
         "num_candidates_analyzed": len(sequences),
-        "num_scenarios": len(sensitivity_df['scenario'].unique()),
-        "mean_rank_change_across_scenarios": float(rank_stability_df['mean_rank_change'].mean()),
+        "num_perturbations": n_perturbations,
+        "num_scenarios_including_baseline": len(sensitivity_df['scenario'].unique()),
+        "num_perturbations_with_zero_rank_change": n_stable,
+        "mean_rank_change_across_perturbations": float(rank_stability_df['mean_rank_change'].mean()),
         "max_rank_change_observed": float(rank_stability_df['max_rank_change'].max()),
         "top_candidate_stability": float(rank_stability_df['top_candidate_unchanged'].sum() / len(rank_stability_df)),
-        "conclusion": (
-            "Frontier ranking is robust to ±30% parameter variations. "
-            "Core candidates maintain top positions across all scenarios."
-            if rank_stability_df['max_rank_change'].max() <= 3
-            else "Frontier ranking shows sensitivity to parameter choices."
-        ),
+        "conclusion": conclusion,
     }
 
     # Write summary

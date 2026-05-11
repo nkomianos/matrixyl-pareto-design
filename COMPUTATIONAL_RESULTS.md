@@ -12,8 +12,8 @@
 A constrained evolutionary optimization workflow was used to discover Matrixyl-family (`KTTKS`) peptide analogs with improved topical-delivery descriptors while preserving functional motifs. **Real computational results** show:
 
 - **9-member Pareto frontier** separating permeability vs. motif-preservation trade-offs
-- **Top candidate**: `PTTPS` (46.9% improvement in penetration score, 33% functional preservation)
-- **Conservative candidate**: `KTTPS` (27.5% penetration improvement, 83% functional preservation)
+- **Top candidate**: `PTTPS` (+74% penetration descriptor vs KTTKS, 67% functional preservation)
+- **Conservative candidate**: `KTTPS` (+38% penetration descriptor vs KTTKS, 83% functional preservation)
 - **Dominant mutation**: K4P (lysine→proline at position 4, present in 56% of frontier)
 - **Synthesis panel**: 3 candidates selected for experimental validation
 

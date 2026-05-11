@@ -6,18 +6,9 @@ A reproducible computational framework for redesigning the Matrixyl (palmitoyl p
 
 ---
 
-## Headline results
+## Results
 
-- **9-member Pareto frontier**, 100 % precision and recall vs. exhaustive enumeration.
-- **Dominant design move**: lysine→proline at position 4 (**K4P**), present in 56 % of frontier candidates; reduces TPSA by 25.6 % and removes a +1 charge.
-- **Lead candidates** (synthesis panel):
-  - `PTTPS` — high-penetration trade-off (penetration 0.687, function 0.667, MW 501.5 Da).
-  - `KTTPS` — balanced one-mutation analog (penetration 0.546, function 0.833) — **recommended**.
-  - `KTTPP` — backup high-penetration analog (penetration 0.678, function 0.670).
-- **Sensitivity check**: top rankings stable under ±30 % perturbation of TPSA / MW / LogP penalty weights.
-- **Structural compactness**: PTTPS mean radius of gyration 5.05 Å vs. 5.42 Å for KTTKS (−6.9 %); palmitoylated Pal-KTTKS conversely expands to 8.38 Å (+54.5 %), explaining why its LogP gain does not translate into a proportional permeability gain.
-
-For full details see [`COMPUTATIONAL_RESULTS.md`](COMPUTATIONAL_RESULTS.md), the manuscript in [`manuscript/`](manuscript/), and the per-phase CSVs under [`results/`](results/).
+The pipeline returns a 9-member Pareto frontier in the trade-off between predicted skin permeability and motif preservation, with three sequences proposed for experimental validation. The frontier matches the ground-truth Pareto set obtained by exhaustive enumeration of the entire 3,706-candidate search space. All numerical results, figures, and the discussion of the dominant design driver are in the manuscript at [`manuscript/main.tex`](manuscript/main.tex); per-phase CSVs are under [`results/`](results/).
 
 ---
 

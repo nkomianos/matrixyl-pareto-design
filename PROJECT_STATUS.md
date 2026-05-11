@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 What We Built
+## What this project built
 
 A **reproducible computational optimization pipeline** for discovering cosmetic peptide analogs with improved topical-delivery descriptors, starting from Matrixyl (KTTKS) baseline.
 
@@ -74,7 +74,7 @@ results/
 
 ---
 
-## 🧪 Ready for Experimental Validation
+## Ready for experimental validation
 
 ### Synthesis Panel
 | Candidate | Role | Penetration | Function | MW | Rationale |
@@ -96,7 +96,7 @@ results/
 
 ---
 
-## 📈 By The Numbers
+## Summary numbers
 
 | Metric | Value | Notes |
 |--------|-------|-------|
@@ -113,7 +113,7 @@ results/
 
 ---
 
-## ✅ Publication Checklist
+## Publication checklist
 
 - [x] **Reproducible algorithm** — Fixed seeds, deterministic GA/NSGA-II
 - [x] **Well-defined search space** — 3,706 exhaustively enumerable candidates
@@ -130,7 +130,7 @@ results/
 
 ---
 
-## 🚀 Next Steps for You
+## Next steps
 
 ### Immediate (This Week)
 1. **Get synthesis quotes** from peptide CRO
@@ -163,33 +163,7 @@ results/
 
 ---
 
-## 🎓 What This Demonstrates
-
-✅ **Computational competency**
-- Multi-objective optimization (NSGA-II)
-- Deterministic reproducibility
-- Exhaustive validation
-
-✅ **Chemical understanding**
-- RDKit molecular descriptors
-- Penetration-prediction principles
-- Peptide design trade-offs
-
-✅ **Systematic design**
-- Clear problem definition
-- Quantitative objectives
-- Data-driven candidate selection
-
-✅ **Publication rigor**
-- Code reproducibility
-- Sensitivity analysis
-- Honest limitations
-
-**This is exactly what a strong computational biology paper should be.**
-
----
-
-## 📖 How to Use These Deliverables
+## How to use these deliverables
 
 **For writing the paper:**
 1. The manuscript source lives at `manuscript/main.tex` and is the canonical reference
@@ -208,7 +182,7 @@ results/
 
 ---
 
-## 🔬 Scientific Limitations (Be Transparent)
+## Scientific limitations
 
 Include in Discussion:
 1. **Descriptor thresholds are soft** (MW < 500, TPSA < 140 are guidelines, not laws for peptides)
@@ -221,20 +195,11 @@ This honesty strengthens the paper—you're making clear claims about what you d
 
 ---
 
-## 🎉 Summary
+## Summary
 
-You now have a **complete, reproducible, publication-ready computational framework** for peptide design. The work:
-
-- ✅ Demonstrates competence in algorithms, chemistry, and reproducibility
-- ✅ Identifies clear design principles (K4P mutation) with strong supporting evidence
-- ✅ Provides 3 candidates ready for experimental testing
-- ✅ Is honest about limitations and suitable for computational biology journals
-
-**Timeline to publication: 4-6 weeks if you submit now, 3-4 months to acceptance.**
-
-Ready to draft the paper?
+The pipeline is complete and reproducible. The 9-member Pareto frontier matches the ground-truth Pareto set obtained by exhaustive enumeration; the K4P substitution recurs across all robust perturbations of the descriptor weights; three candidates (PTTPS, KTTPS, KTTPP) are proposed for experimental validation. All numerical findings are in `manuscript/main.tex`; this document is internal project tracking and is not intended as a results reference.
 
 ---
 
-**Computational work**: commodity CPU hardware (no GPU required)
-**Quality**: 48 unit tests passing, fully reproducible
+**Computational work**: commodity CPU hardware (no GPU required).
+**Tests**: 48 unit tests, fully reproducible.

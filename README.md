@@ -133,7 +133,7 @@ pdflatex main.tex
 pdflatex main.tex   # second pass for cross-references
 ```
 
-A preprint of this manuscript has been deposited on bioRxiv. The Zenodo snapshot of the accompanying code release is at [doi:10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787).
+A preprint of this manuscript has been deposited on bioRxiv. The Zenodo snapshot of the accompanying code release is at [doi:10.5281/zenodo.20128083](https://doi.org/10.5281/zenodo.20128083).
 
 ---
 
@@ -163,7 +163,7 @@ No proprietary or restricted data are used.
 
 ## Citation
 
-If you use this repository, please cite the manuscript and the supporting code release. The Zenodo DOI for the release is [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787). Machine-readable metadata is in [`CITATION.cff`](CITATION.cff); the full bibliography for the manuscript is at the end of [`manuscript/main.tex`](manuscript/main.tex).
+If you use this repository, please cite the manuscript and the supporting code release. The Zenodo DOI for the release is [10.5281/zenodo.20128083](https://doi.org/10.5281/zenodo.20128083). Machine-readable metadata is in [`CITATION.cff`](CITATION.cff); the full bibliography for the manuscript is at the end of [`manuscript/main.tex`](manuscript/main.tex).
 
 ---
 

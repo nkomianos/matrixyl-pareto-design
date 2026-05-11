@@ -115,7 +115,7 @@ results/
 
 ## Pre-submission self-check
 
-The deterministic phases of the pipeline (Phases 1--5 and the Phase 6 sensitivity sweep) are complete and committed. The Pareto frontier has been validated against an exhaustive enumeration of the 3,706-candidate search space. The 48-test unit-test suite passes from a clean clone. Code, data, and results are licensed under MIT; the preprint is distributed under CC BY 4.0. The Zenodo snapshot for the release accompanying the preprint is at [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787).
+The deterministic phases of the pipeline (Phases 1--5 and the Phase 6 sensitivity sweep) are complete and committed. The Pareto frontier has been validated against an exhaustive enumeration of the 3,706-candidate search space. The 48-test unit-test suite passes from a clean clone. Code, data, and results are licensed under MIT; the preprint is distributed under CC BY 4.0. The Zenodo snapshot for the release accompanying the preprint is at [10.5281/zenodo.20128083](https://doi.org/10.5281/zenodo.20128083).
 
 ---
 

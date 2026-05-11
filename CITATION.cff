@@ -16,6 +16,11 @@ authors:
     email: pranup48@gmail.com
 repository-code: "https://github.com/nkomianos/matrixyl-pareto-design"
 license: MIT
+version: "1.0.0-preprint"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20126787
+    description: Zenodo archive of the v1.0.0-preprint release accompanying the bioRxiv preprint.
 keywords:
   - peptide design
   - NSGA-II

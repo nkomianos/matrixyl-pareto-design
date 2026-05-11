@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-05-11T19:07:06.627640",
+  "frontier_input": "results/phase2_pareto/pareto_frontier.csv",
+  "seed": 42,
+  "summary": {
+    "num_candidates_analyzed": 9,
+    "num_scenarios": 7,
+    "mean_rank_change_across_scenarios": 0.2962962962962963,
+    "max_rank_change_observed": 6.0,
+    "top_candidate_stability": 0.8333333333333334,
+    "conclusion": "Frontier ranking shows sensitivity to parameter choices."
+  }
+}

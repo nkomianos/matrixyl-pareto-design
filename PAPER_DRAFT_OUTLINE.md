@@ -198,11 +198,11 @@ functional_score = 0.4 * f_identity + 0.4 * f_edit_distance + 0.2 * f_blosum
 
 | Sequence | Role | Mean RoG (Ų) | vs KTTKS | Compactness |
 |----------|------|-------------|---------|-------------|
-| PTTPS | Optimal | 4.83 | −12.0% | **Most compact** |
-| KTTPS | Balanced | 4.99 | −8.8% | Compact |
-| KTTPP | Alt-high | 5.25 | −4.0% | Moderate |
-| KTTKS | Baseline | 5.47 | — | Reference |
-| Pal-KTTKS | Lipidated | 8.56 | +56% | **Spatially large** |
+| PTTPS | Optimal | 5.05 | −6.9% | **Most compact** |
+| KTTPS | Balanced | 5.08 | −6.3% | Compact |
+| KTTPP | Alt-high | 5.25 | −3.3% | Moderate |
+| KTTKS | Baseline | 5.42 | — | Reference |
+| Pal-KTTKS | Lipidated | 8.38 | +54.5% | **Spatially large** |
 
 **Key finding**: Pal-KTTKS despite improved LogP, remains spatially extended due to lipid tail, explaining modest permeability gain (5.1%) despite descriptor improvements.
 

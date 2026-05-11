@@ -83,6 +83,4 @@ data/raw/
 *.dcd
 *.trr
 
-# Logs
-*.log
 logs/

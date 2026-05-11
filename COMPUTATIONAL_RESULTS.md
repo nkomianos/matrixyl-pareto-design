@@ -95,11 +95,11 @@ Formal charge:        0
 
 | Sequence | Role | Mean RoG (Å) | vs KTTKS | Notes |
 |----------|------|-------------|---------|-------|
-| **PTTPS** | High-penetration | **4.83** | -12.0% | **Most compact** |
-| **KTTPS** | Balanced | **4.99** | -8.8% | More rigid backbone |
-| KTTPP | Backup | 5.25 | -4.0% | Moderate compactness |
-| KTTKS | Baseline | 5.47 | — | Reference |
-| Pal-KTTKS | Lipidated | 8.56 | +56.3% | **Large spatial extent** |
+| **PTTPS** | High-penetration | **5.05** | -6.9% | **Most compact** |
+| **KTTPS** | Balanced | **5.08** | -6.3% | More rigid backbone |
+| KTTPP | Backup | 5.25 | -3.3% | Moderate compactness |
+| KTTKS | Baseline | 5.42 | -- | Reference |
+| Pal-KTTKS | Lipidated | 8.38 | +54.5% | **Large spatial extent** |
 
 **Interpretation**: K4P replacement (→ PTTPS) reduces conformational size, potentially improving diffusion. Pal-KTTKS remains spatially large despite improved LogP, confirming that lipidation creates a different permeability problem.
 
@@ -241,6 +241,5 @@ Formal charge:        0
 
 ---
 
-**Pipeline Architect**: Claude Code  
-**Data Generated**: GPU-accelerated evolutionary search + RDKit descriptor calculations  
-**Status**: Production-ready for experimental validation
+**Data generated**: deterministic evolutionary search + RDKit descriptor calculations on commodity CPU hardware
+**Status**: ready for experimental validation

@@ -15,7 +15,7 @@ A reproducible computational framework for redesigning the Matrixyl (palmitoyl p
   - `KTTPS` — balanced one-mutation analog (penetration 0.546, function 0.833) — **recommended**.
   - `KTTPP` — backup high-penetration analog (penetration 0.678, function 0.670).
 - **Sensitivity check**: top rankings stable under ±30 % perturbation of TPSA / MW / LogP penalty weights.
-- **Structural compactness**: PTTPS radius of gyration 4.83 Å vs. 5.47 Å for KTTKS (−12 %); palmitoylated Pal-KTTKS conversely expands to 8.56 Å, explaining its modest measured permeability gain despite better LogP.
+- **Structural compactness**: PTTPS mean radius of gyration 5.05 Å vs. 5.42 Å for KTTKS (−6.9 %); palmitoylated Pal-KTTKS conversely expands to 8.38 Å (+54.5 %), explaining why its LogP gain does not translate into a proportional permeability gain.
 
 For full details see [`COMPUTATIONAL_RESULTS.md`](COMPUTATIONAL_RESULTS.md), the manuscript in [`manuscript/`](manuscript/), and the per-phase CSVs under [`results/`](results/).
 

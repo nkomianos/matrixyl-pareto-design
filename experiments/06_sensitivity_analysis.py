@@ -40,12 +40,8 @@ def run_sensitivity_analysis(
     frontier_df = pd.read_csv(frontier_csv)
     sequences = frontier_df['sequence'].tolist()
 
-    # Baseline evaluator (default weights)
-    baseline_eval = CandidateEvaluator(
-        reference_sequence="KTTKS",
-        search_space_rules=SearchSpaceRules(),
-        seed=seed,
-    )
+    # Baseline evaluator (default weights, default Matrixyl search space)
+    baseline_eval = CandidateEvaluator()
 
     # Store results for each parameter sweep
     sensitivity_results = {}
@@ -79,33 +75,38 @@ def run_sensitivity_analysis(
 
         for seq in sequences:
             result = baseline_eval.evaluate_sequence(seq)
-            if result.is_valid:
-                desc = result.descriptors
+            if result.is_valid and result.penetration is not None:
+                desc = result.penetration.descriptors
 
-                # Re-score with modified weights
-                # Simple adjustment: scale the penalty components
-                penetration_score = result.penetration_score
-                if scenario_name != "baseline":
-                    # Approximate: re-weight the underlying descriptor penalties
-                    # This is a simplified sensitivity; a full implementation
-                    # would regenerate the entire scoring function
-                    adjusted_penetration = penetration_score * (
-                        0.6 * scenario_config["tpsa_mult"] +
-                        0.2 * scenario_config["mw_mult"] +
-                        0.2 * scenario_config["logp_mult"]
-                    ) / 1.0
-                else:
-                    adjusted_penetration = penetration_score
+                # Re-score with modified weights by perturbing the per-descriptor
+                # penalty contributions and recombining multiplicatively.
+                penalties = result.penetration.penalties
+                tpsa_pen = penalties.get("tpsa", 0.0) * scenario_config["tpsa_mult"]
+                mw_pen = penalties.get("molecular_weight", 0.0) * scenario_config["mw_mult"]
+                logp_pen = penalties.get("logp", 0.0) * scenario_config["logp_mult"]
+                other_pen = sum(
+                    v for k, v in penalties.items()
+                    if k not in {"tpsa", "molecular_weight", "logp"}
+                )
+                # Clamp each perturbed penalty to [0, 1] before recombining
+                tpsa_pen = min(1.0, max(0.0, tpsa_pen))
+                mw_pen = min(1.0, max(0.0, mw_pen))
+                logp_pen = min(1.0, max(0.0, logp_pen))
+                # Recombine as the original penetration score does: product of (1 - penalty)
+                adjusted_penetration = max(
+                    0.01,
+                    (1.0 - tpsa_pen) * (1.0 - mw_pen) * (1.0 - logp_pen) * (1.0 - other_pen)
+                )
 
                 scenario_results.append({
                     "sequence": seq,
                     "scenario": scenario_name,
-                    "penetration_score_original": result.penetration_score,
+                    "penetration_score_original": result.penetration.score,
                     "penetration_score_adjusted": adjusted_penetration,
-                    "functional_score": result.functional_preservation_score,
-                    "molecular_weight": desc.molecular_weight if desc else None,
-                    "tpsa": desc.tpsa if desc else None,
-                    "logp": desc.logp if desc else None,
+                    "functional_score": result.functional_preservation.score,
+                    "molecular_weight": desc.molecular_weight,
+                    "tpsa": desc.tpsa,
+                    "logp": desc.logp,
                 })
 
         all_scenario_results.extend(scenario_results)

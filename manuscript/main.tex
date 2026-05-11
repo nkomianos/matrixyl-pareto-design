@@ -29,6 +29,7 @@
 \onehalfspacing
 
 % Headers and footers
+\setlength{\headheight}{14pt}
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{Page \thepage\ of \pageref{LastPage}}
@@ -59,7 +60,7 @@
 \maketitle
 
 \begin{abstract}
-Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is a collagen-stimulating peptide used in topical anti-ageing products, but its in-use efficacy is limited by poor permeation through the stratum corneum. We describe a deterministic computational workflow that combines a tournament genetic algorithm and NSGA-II with exact RDKit molecular descriptors to search the fixed-length, edit-distance-2 neighbourhood of KTTKS (3,706 candidate sequences) for analogs with descriptors more favourable for passive transdermal diffusion. The search returns a 9-member Pareto frontier that quantifies the trade-off between predicted permeability and motif preservation. Five of the nine frontier members carry the same substitution, lysine to proline at position 4 (K4P). This single change lowers the topological polar surface area by 25.6\%, removes the +1 charge contributed by lysine, and reduces the functional-preservation score from 1.00 (KTTKS) to 0.67. The frontier ranking is stable to $\pm 30\%$ perturbations of the descriptor penalty weights, and matches the ground-truth Pareto frontier obtained by exhaustive enumeration of all 3,706 candidates (precision and recall both 100\%). On the basis of these results we recommend three sequences for experimental validation: PTTPS (largest predicted gain), KTTPS (single-mutation, conservative), and KTTPP (backup). All code, results, and figures are released under MIT and CC BY 4.0.
+Matrixyl (palmitoyl pentapeptide-4, KTTKS core) is a collagen-stimulating peptide used in topical anti-ageing products, but its in-use efficacy is limited by poor permeation through the stratum corneum. We describe a deterministic computational workflow that combines a tournament genetic algorithm and NSGA-II with exact RDKit molecular descriptors to search the fixed-length, edit-distance-2 neighbourhood of KTTKS (3,706 candidate sequences) for analogs with descriptors more favourable for passive transdermal diffusion. The search returns a 9-member Pareto frontier that quantifies the trade-off between predicted permeability and motif preservation. Five of the nine frontier members carry the same substitution, lysine to proline at position 4 (K4P). This single change lowers the topological polar surface area by 25.6\%, removes the +1 charge contributed by lysine, and reduces the functional-preservation score from 1.00 (KTTKS) to 0.67. The frontier ranking is unchanged by $\pm 30\%$ perturbations to the TPSA and $M_w$ penalty weights and by a 30\% increase in the LogP penalty; only a 30\% reduction in the LogP penalty produces rank movement. The frontier matches the ground-truth Pareto set obtained by exhaustive enumeration of all 3,706 candidates (precision and recall both 100\%). On the basis of these results we recommend three sequences for experimental validation: PTTPS (largest predicted gain), KTTPS (single-mutation, conservative), and KTTPP (backup). All code, results, and figures are released under MIT and CC BY 4.0.
 
 \smallskip
 \noindent
@@ -484,11 +485,11 @@ RoG statistics for top candidates and baselines (8 conformers per sequence, MMFF
 \toprule
 \textbf{Sequence} & \textbf{Role} & \textbf{Mean RoG ($\text{\AA}$)} & \textbf{vs KTTKS} & \textbf{Compactness Rank} \\
 \midrule
-PTTPS & Optimal & 4.83 & -12.0\% & \textbf{1st (most compact)} \\
-KTTPS & Balanced & 4.99 & -8.8\% & 2nd \\
-KTTPP & Alt-high & 5.25 & -4.0\% & 3rd \\
-KTTKS & Baseline & 5.47 & — & 4th \\
-Pal-KTTKS & Lipidated & 8.56 & +56.3\% & 5th (least compact) \\
+PTTPS & Optimal & 5.05 & $-6.9\%$ & \textbf{1st (most compact)} \\
+KTTPS & Balanced & 5.08 & $-6.3\%$ & 2nd \\
+KTTPP & Alt-high & 5.25 & $-3.3\%$ & 3rd \\
+KTTKS & Baseline & 5.42 & -- & 4th \\
+Pal-KTTKS & Lipidated & 8.38 & $+54.5\%$ & 5th (least compact) \\
 \bottomrule
 \end{tabular}
 \caption{Radius of gyration (RoG), a one-number summary of molecular extent computed from 8-conformer RDKit ETKDG ensembles (Eq.~\ref{eq:rog}). Lower RoG indicates a more compact, diffusion-favorable conformation.}
@@ -497,9 +498,9 @@ Pal-KTTKS & Lipidated & 8.56 & +56.3\% & 5th (least compact) \\
 
 \textbf{Key findings}:
 \begin{enumerate}
-  \item \textbf{PTTPS is most compact}: Mean RoG of 4.83 $\text{\AA}$ is 12.0\% smaller than KTTKS baseline (5.47 $\text{\AA}$), consistent with the hypothesis that K4P substitution (replacing large, hydrophobic-poor lysine with compact proline) reduces conformational size.
-  \item \textbf{Pal-KTTKS remains spatially extended}: although palmitoylation improves LogP by +0.99 against KTTKS, the palmitoyl tail extends the conformational ensemble to 8.56 $\text{\AA}$ mean RoG (56.3\% larger than the unmodified peptide). The cost in molecular size therefore outweighs the LogP benefit, which is why palmitoylation produces only a modest net gain in the penetration descriptor.
-  \item \textbf{Compactness correlates with penetration}: The rank ordering of RoG (PTTPS $<$ KTTPS $<$ KTTPP $<$ KTTKS $<$ Pal-KTTKS) mirrors the penetration rank (0.687 $>$ 0.546 $>$ 0.678 $>$ 0.395 $>$ 0.508), supporting the hypothesis that conformational compactness favors diffusion.
+  \item \textbf{PTTPS is the most compact frontier member}: mean RoG of 5.05~$\text{\AA}$ is 6.9\% smaller than the KTTKS baseline (5.42~$\text{\AA}$), consistent with the hypothesis that K4P substitution (replacing the long, polar lysine side chain with the cyclic proline backbone) reduces conformational extent.
+  \item \textbf{Pal-KTTKS remains spatially extended}: although palmitoylation improves LogP by +0.99 against KTTKS, the palmitoyl tail extends the conformational ensemble to 8.38~$\text{\AA}$ mean RoG (54.5\% larger than the unmodified peptide). The cost in molecular size therefore offsets the LogP benefit, which is why palmitoylation produces only a modest net gain in the penetration descriptor.
+  \item \textbf{Compactness is positively but imperfectly correlated with penetration}: the most compact candidate (PTTPS) also has the highest penetration score, and the high-penetration candidates cluster at the low-RoG end of the table. The ordering is not strictly monotonic, however: among the three high-penetration candidates the RoG ranking (PTTPS $<$ KTTPS $<$ KTTPP) differs from the penetration ranking (PTTPS $>$ KTTPP $>$ KTTPS), so RoG is one contributor to permeability rather than the sole driver.
 \end{enumerate}
 
 \subsection{Phase 5: Edit Distance 3 (Extended Search Space)}
@@ -516,7 +517,7 @@ To test for diminishing returns, NSGA-II was re-run with max edit distance 3 (ED
 Frontier size & 9 & 20 \\
 Best penetration & 0.687 (PTTPS) & 0.785 (KFFKP) \\
 Penetration gain vs baseline & +74\% & +99\% \\
-All ED$\leq 2$ frontier members on ED$\leq 3$ frontier & — & 9/9 (100\%) \\
+All ED$\leq 2$ frontier members on ED$\leq 3$ frontier & -- & 9/9 (100\%) \\
 \bottomrule
 \end{tabular}
 \caption{Extended search space (edit distance 3) shows diminishing returns. Best penetration improved 14.2\%, but moved further from Matrixyl motif.}
@@ -559,22 +560,21 @@ $\pm 30\%$ variations in TPSA, $M_w$, and LogP penalties were applied to the Pha
 \toprule
 \textbf{Parameter Variation} & \textbf{Mean Rank Change} & \textbf{Max Rank Change} \\
 \midrule
-Baseline (no variation) & — & — \\
-TPSA -30\% & 0.2 & 1 \\
-TPSA +30\% & 0.1 & 0 \\
-$M_w$ $-30\%$ & 0.3 & 1 \\
-$M_w$ $+30\%$ & 0.2 & 1 \\
-LogP -30\% & 0.4 & 2 \\
-LogP +30\% & 0.3 & 1 \\
-\toprule
-\textbf{Average across all scenarios} & \textbf{0.25} & \textbf{0.86} \\
+TPSA $-30\%$ & 0.00 & 0 \\
+TPSA $+30\%$ & 0.00 & 0 \\
+$M_w$ $-30\%$ & 0.00 & 0 \\
+$M_w$ $+30\%$ & 0.00 & 0 \\
+LogP $-30\%$ & 1.78 & 6 \\
+LogP $+30\%$ & 0.00 & 0 \\
+\midrule
+\textbf{Mean across 6 scenarios} & \textbf{0.30} & \textbf{1.00} \\
 \bottomrule
 \end{tabular}
-\caption{Ranking stability under ±30\% penalty weight variations. Top 3 candidates remain stable across all scenarios.}
+\caption{Ranking stability of the 9-member Pareto frontier under $\pm 30\%$ perturbations of the per-descriptor penalty weights. Rank change is the absolute change in a candidate's position relative to the unperturbed baseline ranking. Five of the six perturbations leave the ranking completely unchanged; only a 30\% reduction in the LogP penalty produces movement.}
 \label{tab:sensitivity}
 \end{table}
 
-\textbf{Conclusion}: The Pareto frontier is stable under these perturbations. No candidate outside the original frontier enters the top three under any of the six $\pm 30\%$ variations, and the mean rank change averaged across the sweep is 0.25 positions. This stability suggests that K4P and the position-5 flexibility are features of the descriptor landscape, not artifacts of the particular weights we chose.
+\textbf{Conclusion}: The frontier ranking is completely stable under five of the six perturbations: $\pm 30\%$ changes to the TPSA or $M_w$ penalties, and a 30\% increase in the LogP penalty, all leave every candidate's position unchanged. The single exception is a 30\% reduction of the LogP penalty, which reorders 6 of 9 frontier members and demotes the top candidate. This is consistent with LogP being the only descriptor that is far from its target range for several frontier members; reducing its penalty allows otherwise-suppressed hydrophilic candidates to re-enter the top. The robust K4P signature and the high-penetration core of the frontier (PTTPS, KTTPP) are not artifacts of the specific weighting we chose; they survive all $\pm 30\%$ perturbations of the TPSA and $M_w$ penalties.
 
 \subsection{Exhaustive Enumeration Validation}
 
@@ -588,10 +588,10 @@ The full 3,706-candidate space was exhaustively evaluated and ranked by Pareto d
 \textbf{Metric} & \textbf{Evolved Frontier} & \textbf{True Frontier} \\
 \midrule
 Frontier size & 9 & 9 \\
-Precision & 9/9 = 100\% & — \\
-Recall & — & 9/9 = 100\% \\
-Missing true frontier members & 0 & — \\
-Extra evolved members & 0 & — \\
+Precision & 9/9 = 100\% & -- \\
+Recall & -- & 9/9 = 100\% \\
+Missing true frontier members & 0 & -- \\
+Extra evolved members & 0 & -- \\
 \bottomrule
 \end{tabular}
 \caption{Exhaustive enumeration validation: NSGA-II recovered the true Pareto frontier with perfect precision and recall.}
@@ -776,11 +776,11 @@ This yields:
 \begin{itemize}
   \item ED = 0: 1 candidate (KTTKS itself)
   \item ED = 1: ${5 \choose 1} \times 19 = 95$ candidates (5 positions, 19 alternative residues per position)
-  \item ED = 2: ${5 \choose 2} \times 19^2 = 2610$ candidates (2 positions changed, each to one of 19 alternatives)
-  \item Total: $1 + 95 + 2610 = 2706$ candidates
+  \item ED = 2: ${5 \choose 2} \times 19^2 = 3{,}610$ candidates (two positions changed, each replaced by one of 19 alternatives)
+  \item Total: $1 + 95 + 3{,}610 = 3{,}706$ candidates
 \end{itemize}
 
-The discrepancy from the reported 3,706 arises from the fact that some combinations at ED=2 are equivalent under permutation (e.g., swapping positions 1 and 2 changes two independent residues but might create overlaps in the enumeration). A direct enumeration via all 20$^5$ sequences and post-filtering yields the accurate count of 3,706.
+This count is also recovered by enumerating all $20^5$ length-5 sequences and post-filtering for Hamming distance $\leq 2$, which we use as an independent check.
 
 \subsection{Code Availability}
 

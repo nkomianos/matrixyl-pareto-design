@@ -18,13 +18,11 @@ repository-code: "https://github.com/nkomianos/matrixyl-pareto-design"
 license: MIT
 keywords:
   - peptide design
-  - evolutionary algorithms
   - NSGA-II
   - topical delivery
-  - constrained optimization
   - Pareto frontier
   - Matrixyl
-  - RDKit
+  - matrikine
 preferred-citation:
   type: article
   title: "Constrained Evolutionary Design of Matrixyl Analogs: Balancing Permeability and Functional Preservation Through Computational Optimization"

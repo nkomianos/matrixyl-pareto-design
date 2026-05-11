@@ -1,0 +1,7 @@
+scenario,mean_rank_change,max_rank_change,top_candidate_unchanged
+tpsa_minus30,0.0,0,True
+tpsa_plus30,0.0,0,True
+mw_minus30,0.0,0,True
+mw_plus30,0.0,0,True
+logp_minus30,1.7777777777777777,6,False
+logp_plus30,0.0,0,True

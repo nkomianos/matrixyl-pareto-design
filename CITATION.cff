@@ -11,10 +11,10 @@ type: software
 authors:
   - family-names: Komianos
     given-names: Nikolaos
-    email: n.komianos@gmail.com
+    email: nick@enloq.co
   - family-names: Prakash
     given-names: Pranadarth
-    email: pranup48@gmail.com
+    email: pranu@enloq.co
 repository-code: "https://github.com/nkomianos/matrixyl-pareto-design"
 license: MIT
 version: "1.0.0-preprint"
@@ -35,9 +35,9 @@ preferred-citation:
   authors:
     - family-names: Komianos
       given-names: Nikolaos
-      email: n.komianos@gmail.com
+      email: nick@enloq.co
     - family-names: Prakash
       given-names: Pranadarth
-      email: pranup48@gmail.com
+      email: pranu@enloq.co
   year: 2026
   notes: "Code archive accompanying the bioRxiv preprint; see top-level identifiers for the Zenodo DOI."

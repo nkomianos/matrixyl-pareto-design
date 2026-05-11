@@ -24,46 +24,17 @@ A **reproducible computational optimization pipeline** for discovering cosmetic 
 
 ---
 
-## 📊 Key Computational Results
+## Key results
 
-### Pareto Frontier (9 Candidates)
-
-**Best penetration trade-off**:
-- `PTTPS`: +74% penetration, 67% function (2 mutations)
-
-**Recommended candidate**:
-- `KTTPS`: +38% penetration, 83% function (1 mutation, conservative)
-
-**Backup**:
-- `KTTPP`: +72% penetration, 67% function (2 mutations)
-
-### Scientific Findings
-
-1. **K4P is the dominant design move** (lysine→proline at position 4)
-   - Present in 56% of frontier candidates
-   - Reduces TPSA by 25.6%, removes +1 charge
-   - Mechanistically interpretable
-
-2. **Pareto frontier robust to parameter variations** (±30% penalty weights)
-   - Core candidates maintain top rankings
-   - Design principles parameter-insensitive
-
-3. **Structural compactness correlates with permeability**
-   - PTTPS mean conformational ensemble 6.9 % smaller than the KTTKS baseline (RoG 5.05 Å vs 5.42 Å)
-   - Supports diffusion-favorable hypothesis
-
-4. **Edit distance 3 shows diminishing returns**
-   - Improved penetration (+14% to 0.785) requires moving further from Matrixyl motif
-   - Edit distance 2 provides better signal-to-noise for candidate selection
+The Pareto frontier, K4P design driver, sensitivity-analysis findings, and structural compactness numbers are documented in the manuscript (`manuscript/main.tex`) and in [`COMPUTATIONAL_RESULTS.md`](COMPUTATIONAL_RESULTS.md). Three candidates are recommended for experimental validation: KTTPS (single-mutation, balanced), PTTPS (aggressive), and KTTPP (backup). This file is kept for project-status tracking only and should not be used as a primary results reference.
 
 ---
 
-## 📁 Deliverables
+## Deliverables
 
 ### Documentation
-- **[COMPUTATIONAL_RESULTS.md](COMPUTATIONAL_RESULTS.md)** — Full technical results (9,000 words)
-- **[PAPER_DRAFT_OUTLINE.md](PAPER_DRAFT_OUTLINE.md)** — Manuscript outline ready for expansion (3,500 words)
-- **[PROJECT_STATUS.md](PROJECT_STATUS.md)** — This file
+- **[COMPUTATIONAL_RESULTS.md](COMPUTATIONAL_RESULTS.md)** — Archival working document of technical results
+- **[PROJECT_STATUS.md](PROJECT_STATUS.md)** — this file (project tracking only)
 
 ### Code & Scripts
 - **experiments/06_sensitivity_analysis.py** — Parameter robustness analysis
@@ -173,11 +144,10 @@ results/
    - [ ] Budget for controls
 
 ### Short Term (1-2 Weeks)
-3. **Expand manuscript**
-   - Copy COMPUTATIONAL_RESULTS.md → Methods section
-   - Copy PAPER_DRAFT_OUTLINE.md → Full manuscript template
-   - Add Figure 1-5 (already generated)
-   - Add Table 1-3 (synthesis panel, baseline comparison, frontier)
+3. **Manuscript polish**
+   - The full manuscript is at `manuscript/main.tex` and compiles cleanly via `tectonic main.tex`
+   - 5 figures are at `manuscript/figures/`
+   - Tables (Pareto frontier, mutations, RoG, sensitivity, validation) are in `manuscript/main.tex`
 
 4. **Choose target journal**
    - Recommended: *Journal of Chemical Information and Modeling* (impact ~3.8)
@@ -222,10 +192,9 @@ results/
 ## 📖 How to Use These Deliverables
 
 **For writing the paper:**
-1. Start with PAPER_DRAFT_OUTLINE.md
-2. Expand each section with details from COMPUTATIONAL_RESULTS.md
-3. Insert figures (results/figures/*.png) into Methods/Results sections
-4. Add CSV tables to Results/Supplementary
+1. The manuscript source lives at `manuscript/main.tex` and is the canonical reference
+2. Background and supporting numbers are in `COMPUTATIONAL_RESULTS.md`
+3. Figures are at `manuscript/figures/`
 
 **For colleagues/reviewers:**
 - Point to COMPUTATIONAL_RESULTS.md for full technical description

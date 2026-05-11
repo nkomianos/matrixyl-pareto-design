@@ -30,7 +30,6 @@ matrixyl-pareto-design/
 ├── CITATION.cff                       ← citation metadata
 ├── PROJECT_STATUS.md                  ← short executive summary
 ├── COMPUTATIONAL_RESULTS.md           ← full technical results
-├── PAPER_DRAFT_OUTLINE.md             ← outline used to draft the manuscript
 ├── requirements.txt
 ├── data/
 │   ├── molecules/                     ← Pal-KTTKS SMILES + PubChem record
@@ -62,7 +61,7 @@ matrixyl-pareto-design/
 python -m pip install -r requirements.txt
 
 # 2. Run unit tests
-python -m pytest tests/ -v   # expect 60 passed
+python -m pytest tests/ -v   # expect 48 passed
 
 # 3. Regenerate publication figures from results/ CSVs
 python scripts/generate_figures.py
@@ -143,7 +142,7 @@ pdflatex main.tex
 pdflatex main.tex   # second pass for cross-references
 ```
 
-A pre-print version of this manuscript is being prepared for bioRxiv submission.
+A preprint of this manuscript has been deposited on bioRxiv. The Zenodo snapshot of the accompanying code release is at [doi:10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787).
 
 ---
 
@@ -173,7 +172,7 @@ No proprietary or restricted data are used.
 
 ## Citation
 
-If you use this repository, please cite the manuscript (preprint forthcoming) and the supporting code release. Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
+If you use this repository, please cite the manuscript and the supporting code release. The Zenodo DOI for the release is [10.5281/zenodo.20126787](https://doi.org/10.5281/zenodo.20126787). Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 Foundational references cited in the manuscript:
 

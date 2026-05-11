@@ -1,7 +1,9 @@
 # Computational Optimization Results: Matrixyl Analogs for Enhanced Epidermal Permeability
 
-**Pipeline Status**: ✅ All phases complete (Tournament GA + Pareto + Analysis + Structural Validation + Experimental Design + Sensitivity Analysis)
-**Run Date**: 2026-05-05
+> **Reference note.** This is an archival working document retained for development tracking. The published findings, with the figures and tables that accompany them, are in the manuscript at `manuscript/main.tex`. If a number disagrees between this file and the manuscript, the manuscript is authoritative.
+
+**Pipeline status:** all phases complete (Tournament GA + Pareto + Analysis + Structural Validation + Experimental Design + Sensitivity Analysis).
+**Initial run date:** 2026-05-05; sensitivity analysis re-run 2026-05-11.
 
 ---
 

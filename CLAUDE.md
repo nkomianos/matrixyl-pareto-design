@@ -27,7 +27,6 @@ and future work.
 - [`PROJECT_STATUS.md`](PROJECT_STATUS.md) — short executive summary.
 - [`COMPUTATIONAL_RESULTS.md`](COMPUTATIONAL_RESULTS.md) — full technical
   results.
-- [`PAPER_DRAFT_OUTLINE.md`](PAPER_DRAFT_OUTLINE.md) — manuscript outline.
 - [`manuscript/main.tex`](manuscript/main.tex) — LaTeX source for the bioRxiv
   preprint.
 
